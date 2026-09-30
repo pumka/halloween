@@ -446,7 +446,7 @@
     const grid = el('div', 'board');
     const cellCols = `repeat(${m.nCols}, minmax(0, 1fr))`;
     grid.style.gridTemplateColumns = `minmax(64px, auto) ${cellCols}`;
-    grid.appendChild(el('div', 'corner'));
+    grid.appendChild(this.renderCorner());
     m.columns.forEach(c => {
       grid.appendChild(
         el(
@@ -517,6 +517,32 @@
       document.addEventListener('click', this.docListener);
       window.addEventListener('resize', () => this.positionPopup());
     }
+  };
+
+  // A spider dangling in the empty top-left cell; says "Buh!" when clicked.
+  Game.prototype.renderCorner = function () {
+    const icon = iconHtml(this.cfg.mascot || '🕷️');
+    const corner = el(
+      'div',
+      'corner',
+      '<div class="spider">' +
+        '<span class="spider-thread"></span>' +
+        `<span class="spider-icon">${icon}</span>` +
+        '</div>' +
+        '<span class="boo">Buh!</span>',
+    );
+    corner.addEventListener('click', ev => {
+      ev.stopPropagation();
+      corner.classList.remove('scare');
+      void corner.offsetWidth;
+      corner.classList.add('scare');
+      clearTimeout(this.scareTimer);
+      this.scareTimer = setTimeout(
+        () => corner.classList.remove('scare'),
+        1400,
+      );
+    });
+    return corner;
   };
 
   Game.prototype.paintCell = function (r, c, animate) {
