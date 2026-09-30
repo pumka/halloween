@@ -1,0 +1,4 @@
+# Private material: puzzle solutions and reference screenshots
+task*.png
+example*.jpg
+.idea/

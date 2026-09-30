@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rätsel – Olexii</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="css/game.css">
+  <script src="js/menu.js"></script>
+  <script src="js/engine.js"></script>
+</head>
+<body>
+  <nav id="menu" class="menu"></nav>
+  <main id="game"></main>
+  <script>
+    const R = LogicGame.rules;
+    LogicGame.start({
+      id: 'olexii',
+      title: 'Die Monster-Werkstatt',
+      intro: 'Wer arbeitet in welchem Labor, mit welchem Gegenstand und an welchem Ort?',
+
+      // Columns (positions from left to right). "links"/"rechts" in the rules refers to these.
+      columns: [
+        { label: 'Labor 1', icon: '🚪' },
+        { label: 'Labor 2', icon: '🚪' },
+        { label: 'Labor 3', icon: '🚪' },
+        { label: 'Labor 4', icon: '🚪' },
+      ],
+
+      // Rows: every row needs exactly one item per column. Names must be unique.
+      // A "|" marks where a long name may wrap (e.g. 'Schrecke|schnecke'); rules use the name without it.
+      rows: [
+        { label: 'Wissenschaftler', items: [
+          { name: 'Gift|maker', icon: '🧪' },
+          { name: 'Zitter|hand', icon: '🖐️' },
+          { name: 'Hirn|schmalz', icon: '🧠' },
+          { name: 'Gänse|haut', icon: '🥶' },
+        ] },
+        { label: 'Gegenstand', items: [
+          { name: 'Brille', icon: '👓' },
+          { name: 'Heft', icon: '📓' },
+          { name: 'USB', icon: '💾' },
+          { name: 'Würfel', icon: '🎲' },
+        ] },
+        { label: 'Ort', items: [
+          { name: 'Cold closet', icon: '🧊' },
+          { name: 'Hot box', icon: '🔥' },
+          { name: 'Clothes swimmer', icon: '🧺' },
+          { name: 'Dry clothes box', icon: '🌬️' },
+        ] },
+      ],
+
+      // Already placed when the game starts: [name, column number].
+      given: [
+        ['Brille', 1],
+      ],
+
+      // Rules: text for the kids + check. Item names in the text get highlighted automatically.
+      // Helpers: same, notSame, leftOf, rightOf, directlyLeftOf, directlyRightOf, nextTo, notNextTo,
+      //          inColumn, notInColumn, atEdge, notAtEdge, between, all, any, not
+      // Custom:  check: s => s.col('Kamm') > 2
+      rules: [
+        { text: 'Giftmaker trägt die Brille.', check: R.same('Giftmaker', 'Brille') },
+        { text: 'Hirnschmalz speichert alles auf dem USB.', check: R.same('Hirnschmalz', 'USB') },
+        { text: 'Der USB steckt im Clothes swimmer.', check: R.same('USB', 'Clothes swimmer') },
+        { text: 'Gänsehaut spielt mit dem Würfel.', check: R.same('Gänsehaut', 'Würfel') },
+        { text: 'Zitterhand arbeitet direkt links neben Hirnschmalz.', check: R.directlyLeftOf('Zitterhand', 'Hirnschmalz') },
+        { text: 'Das Heft liegt in der Hot box.', check: R.same('Heft', 'Hot box') },
+        { text: 'Der Würfel liegt nicht im Cold closet.', check: R.notSame('Würfel', 'Cold closet') },
+        { text: 'Die Dry clothes box steht ganz rechts.', check: R.inColumn('Dry clothes box', 4) },
+      ],
+
+      winEmoji: '🧪',
+      winTitle: 'Rätsel gelöst!',
+      winMessage: 'Toll gemacht! Dein nächster Hinweis wartet … (Text hier eintragen)',
+    });
+  </script>
+</body>
+</html>

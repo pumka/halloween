@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rätsel – Olesia</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="css/game.css">
+  <script src="js/menu.js"></script>
+  <script src="js/engine.js"></script>
+</head>
+<body>
+  <nav id="menu" class="menu"></nav>
+  <main id="game"></main>
+  <script>
+    const R = LogicGame.rules;
+    LogicGame.start({
+      id: 'olesia',
+      title: 'Das Gruselinstitut',
+      intro: 'Wer arbeitet in welchem Labor, mit welchem Gegenstand und an welchem Ort?',
+
+      // Columns (positions from left to right). "links"/"rechts" in the rules refers to these.
+      columns: [
+        { label: 'Labor 1', icon: '🚪' },
+        { label: 'Labor 2', icon: '🚪' },
+        { label: 'Labor 3', icon: '🚪' },
+        { label: 'Labor 4', icon: '🚪' },
+      ],
+
+      // Rows: every row needs exactly one item per column. Names must be unique.
+      // A "|" marks where a long name may wrap (e.g. 'Schrecke|schnecke'); rules use the name without it.
+      rows: [
+        { label: 'Wissenschaftler', items: [
+          { name: 'Nerven|player', icon: '🎧' },
+          { name: 'Spinnen|bein', icon: '🕷️' },
+          { name: 'Blut|wurst', icon: '🌭' },
+          { name: 'Knochen|bruch', icon: '🦴' },
+        ] },
+        { label: 'Gegenstand', items: [
+          { name: 'Karte', icon: '🗺️' },
+          { name: 'Schlüssel', icon: '🔑' },
+          { name: 'Lupe', icon: '🔍' },
+          { name: 'Kerze', icon: '🕯️' },
+        ] },
+        { label: 'Ort', items: [
+          { name: 'Moving picture box', icon: '📺' },
+          { name: 'Plate washer', icon: '🍽️' },
+          { name: 'Dust sucker', icon: '🧹' },
+          { name: 'Shoe house', icon: '👟' },
+        ] },
+      ],
+
+      // Already placed when the game starts: [name, column number].
+      given: [
+        ['Spinnenbein', 2],
+      ],
+
+      // Rules: text for the kids + check. Item names in the text get highlighted automatically.
+      // Helpers: same, notSame, leftOf, rightOf, directlyLeftOf, directlyRightOf, nextTo, notNextTo,
+      //          inColumn, notInColumn, atEdge, notAtEdge, between, all, any, not
+      // Custom:  check: s => s.col('Kamm') > 2
+      rules: [
+        { text: 'Knochenbruch arbeitet ganz rechts.', check: R.inColumn('Knochenbruch', 4) },
+        { text: 'Knochenbruch leuchtet mit der Kerze.', check: R.same('Knochenbruch', 'Kerze') },
+        { text: 'Die Kerze steht im Shoe house.', check: R.same('Kerze', 'Shoe house') },
+        { text: 'Blutwurst sucht mit der Lupe.', check: R.same('Blutwurst', 'Lupe') },
+        { text: 'Nervenplayer arbeitet irgendwo links von Blutwurst.', check: R.leftOf('Nervenplayer', 'Blutwurst') },
+        { text: 'Der Schlüssel liegt im Plate washer.', check: R.same('Schlüssel', 'Plate washer') },
+        { text: 'Der Plate washer steht direkt links neben dem Dust sucker.', check: R.directlyLeftOf('Plate washer', 'Dust sucker') },
+        { text: 'Die Karte liegt nicht beim Dust sucker.', check: R.notSame('Karte', 'Dust sucker') },
+      ],
+
+      winEmoji: '🧪',
+      winTitle: 'Rätsel gelöst!',
+      winMessage: 'Toll gemacht! Dein nächster Hinweis wartet … (Text hier eintragen)',
+    });
+  </script>
+</body>
+</html>
