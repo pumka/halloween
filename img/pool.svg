@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Swimming pool: tiled edge, water with waves, ladder -->
+  <rect x="4" y="18" width="56" height="40" rx="6"
+        fill="#e9edf2" stroke="#8a96a3" stroke-width="2"/>
+  <rect x="10" y="24" width="44" height="28" rx="3"
+        fill="#3aa7e8" stroke="#1f78b4" stroke-width="2"/>
+  <path d="M14 33q4 -3 8 0t8 0t8 0t8 0" fill="none"
+        stroke="#bfe6fb" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M14 42q4 -3 8 0t8 0t8 0t8 0" fill="none"
+        stroke="#bfe6fb" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- ladder -->
+  <path d="M40 30V12a5 5 0 0 1 10 0M48 30V12a5 5 0 0 0 -10 0"
+        fill="none" stroke="#6b7480" stroke-width="3"
+        stroke-linecap="round"/>
+  <path d="M40 20h8M40 26h8" stroke="#6b7480" stroke-width="2.5"/>
+</svg>
