@@ -1,79 +1,121 @@
 <!doctype html>
 <html lang="de">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Rätsel – Lukas</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="css/game.css?v=e9806589">
-  <script src="js/menu.js?v=d2cf56b8"></script>
-  <script src="js/engine.js?v=7593b22b"></script>
-</head>
-<body>
-  <nav id="menu" class="menu"></nav>
-  <main id="game"></main>
-  <script>
-    const R = LogicGame.rules;
-    LogicGame.start({
-      id: 'lukas',
-      title: 'Die Geisterforscher',
-      intro: 'Wer arbeitet in welchem Labor, mit welchem Gegenstand und an welchem Ort?',
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rätsel – Lukas</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap"
+    />
+    <link rel="stylesheet" href="css/game.css?v=f105658d" />
+    <script src="js/menu.js?v=730d5bbb"></script>
+    <script src="js/engine.js?v=f5aa1e61"></script>
+  </head>
+  <body>
+    <nav id="menu" class="menu"></nav>
+    <main id="game"></main>
+    <script>
+      const R = LogicGame.rules;
+      LogicGame.start({
+        id: 'lukas',
+        title: 'Die Geisterforscher',
+        intro:
+          'Wer arbeitet in welchem Labor, mit welchem Gegenstand ' +
+          'und an welchem Ort?',
 
-      // Columns (positions from left to right). "links"/"rechts" in the rules refers to these.
-      columns: [
-        { label: 'Labor 1', icon: '🚪' },
-        { label: 'Labor 2', icon: '🚪' },
-        { label: 'Labor 3', icon: '🚪' },
-        { label: 'Labor 4', icon: '🚪' },
-      ],
+        // Columns (positions from left to right).
+        // "links"/"rechts" in the rules refers to these.
+        columns: [
+          { label: 'Labor 1', icon: '🚪' },
+          { label: 'Labor 2', icon: '🚪' },
+          { label: 'Labor 3', icon: '🚪' },
+          { label: 'Labor 4', icon: '🚪' },
+        ],
 
-      // Rows: every row needs exactly one item per column. Names must be unique.
-      // A "|" marks where a long name may wrap (e.g. 'Schrecke|schnecke'); rules use the name without it.
-      rows: [
-        { label: 'Wissenschaftler', items: [
-          { name: 'Kürbis|hose', icon: '🎃' },
-          { name: 'Schrecke|schnecke', icon: '🐌' },
-          { name: 'Fleder|bart', icon: '🦇' },
-          { name: 'Grusel|fuß', icon: '🦶' },
-        ] },
-        { label: 'Gegenstand', items: [
-          { name: 'Magnet', icon: '🧲' },
-          { name: 'Löffel', icon: '🥄' },
-          { name: 'Flasche', icon: '🍾' },
-          { name: 'Hand|schuh', icon: '🧤' },
-        ] },
-        { label: 'Ort', items: [
-          { name: 'Sticking wall', icon: '📌' },
-          { name: 'Book wall', icon: '📚' },
-          { name: 'Sleeping table', icon: '🛏️' },
-          { name: 'Roof room', icon: '🏚️' },
-        ] },
-      ],
+        // Rows: every row needs exactly one item per column.
+        // Names must be unique. A "|" marks where a long name may wrap
+        // (e.g. 'Schrecke|schnecke'); rules use the name without it.
+        rows: [
+          {
+            label: 'Wissenschaftler',
+            items: [
+              { name: 'Kürbis|hose', icon: '🎃' },
+              { name: 'Schrecke|schnecke', icon: '🐌' },
+              { name: 'Fleder|bart', icon: '🦇' },
+              { name: 'Grusel|fuß', icon: '🦶' },
+            ],
+          },
+          {
+            label: 'Gegenstand',
+            items: [
+              { name: 'Magnet', icon: '🧲' },
+              { name: 'Löffel', icon: '🥄' },
+              { name: 'Flasche', icon: '🍾' },
+              { name: 'Hand|schuh', icon: '🧤' },
+            ],
+          },
+          {
+            label: 'Ort',
+            items: [
+              { name: 'Sticking wall', icon: '📌' },
+              { name: 'Book wall', icon: '📚' },
+              { name: 'Sleeping table', icon: '🛏️' },
+              { name: 'Roof room', icon: '🏚️' },
+            ],
+          },
+        ],
 
-      // Already placed when the game starts: [name, column number].
-      given: [
-        ['Flasche', 3],
-      ],
+        // Already placed when the game starts: [name, column number].
+        given: [['Flasche', 3]],
 
-      // Rules: text for the kids + check. Item names in the text get highlighted automatically.
-      // Helpers: same, notSame, leftOf, rightOf, directlyLeftOf, directlyRightOf, nextTo, notNextTo,
-      //          inColumn, notInColumn, atEdge, notAtEdge, between, all, any, not
-      // Custom:  check: s => s.col('Kamm') > 2
-      rules: [
-        { text: 'Gruselfuß trägt den Handschuh.', check: R.same('Gruselfuß', 'Handschuh') },
-        { text: 'Der Handschuh liegt im Roof room.', check: R.same('Handschuh', 'Roof room') },
-        { text: 'Der Roof room ist ganz rechts.', check: R.inColumn('Roof room', 4) },
-        { text: 'Kürbishose arbeitet direkt links neben Schreckeschnecke.', check: R.directlyLeftOf('Kürbishose', 'Schreckeschnecke') },
-        { text: 'Der Magnet klebt an der Sticking wall.', check: R.same('Magnet', 'Sticking wall') },
-        { text: 'Flederbart trinkt aus der Flasche.', check: R.same('Flederbart', 'Flasche') },
-        { text: 'Der Löffel liegt direkt links neben der Flasche.', check: R.directlyLeftOf('Löffel', 'Flasche') },
-        { text: 'Die Book wall steht nicht neben dem Roof room.', check: R.notNextTo('Book wall', 'Roof room') },
-      ],
+        // Rules: text for the kids + check.
+        // Item names in the text get highlighted automatically.
+        // Helpers: same, notSame, leftOf, rightOf, directlyLeftOf,
+        //          directlyRightOf, nextTo, notNextTo, inColumn, notInColumn,
+        //          atEdge, notAtEdge, between, all, any, not
+        // Custom:  check: s => s.col('Kamm') > 2
+        rules: [
+          {
+            text: 'Gruselfuß trägt den Handschuh.',
+            check: R.same('Gruselfuß', 'Handschuh'),
+          },
+          {
+            text: 'Der Handschuh liegt im Roof room.',
+            check: R.same('Handschuh', 'Roof room'),
+          },
+          {
+            text: 'Der Roof room ist ganz rechts.',
+            check: R.inColumn('Roof room', 4),
+          },
+          {
+            text: 'Kürbishose arbeitet direkt links neben Schreckeschnecke.',
+            check: R.directlyLeftOf('Kürbishose', 'Schreckeschnecke'),
+          },
+          {
+            text: 'Der Magnet klebt an der Sticking wall.',
+            check: R.same('Magnet', 'Sticking wall'),
+          },
+          {
+            text: 'Flederbart trinkt aus der Flasche.',
+            check: R.same('Flederbart', 'Flasche'),
+          },
+          {
+            text: 'Der Löffel liegt direkt links neben der Flasche.',
+            check: R.directlyLeftOf('Löffel', 'Flasche'),
+          },
+          {
+            text: 'Die Book wall steht nicht neben dem Roof room.',
+            check: R.notNextTo('Book wall', 'Roof room'),
+          },
+        ],
 
-      winEmoji: '🧪',
-      winTitle: 'Rätsel gelöst!',
-      winMessage: 'Toll gemacht! Dein nächster Hinweis wartet … (Text hier eintragen)',
-    });
-  </script>
-</body>
+        winEmoji: '🧪',
+        winTitle: 'Rätsel gelöst!',
+        winMessage:
+          'Toll gemacht! Dein nächster Hinweis wartet … ' +
+          '(Text hier eintragen)',
+      });
+    </script>
+  </body>
 </html>
