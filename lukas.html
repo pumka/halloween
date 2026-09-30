@@ -8,9 +8,9 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap"
     />
-    <link rel="stylesheet" href="css/game.css?v=77d969a5" />
+    <link rel="stylesheet" href="css/game.css?v=99a2a9da" />
     <script src="js/menu.js?v=730d5bbb"></script>
-    <script src="js/engine.js?v=ed7194ec"></script>
+    <script src="js/engine.js?v=6e6263cf"></script>
   </head>
   <body>
     <nav id="menu" class="menu"></nav>
@@ -109,6 +109,9 @@
             check: R.notNextTo('Book wall', 'Roof room'),
           },
         ],
+
+        // Creature in the top-left cell: spider, bat, pumpkin or ghost.
+        mascot: 'bat',
 
         winEmoji: '🧪',
         winTitle: 'Rätsel gelöst!',

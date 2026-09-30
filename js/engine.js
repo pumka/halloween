@@ -519,17 +519,26 @@
     }
   };
 
-  // A spider dangling in the empty top-left cell; says "Buh!" when clicked.
+  // Creature in the empty top-left cell; each kid's page picks a preset
+  // (see .mascot-* in game.css). A click makes it react and say something.
+  const MASCOTS = {
+    spider: { icon: '🕷️', say: 'Buh!' },
+    bat: { icon: '🦇', say: 'Iiiek!' },
+    pumpkin: { icon: '🎃', say: 'Bäh!' },
+    ghost: { icon: '👻', say: 'Huhu!' },
+  };
+
   Game.prototype.renderCorner = function () {
-    const icon = iconHtml(this.cfg.mascot || '🕷️');
+    const name = MASCOTS[this.cfg.mascot] ? this.cfg.mascot : 'spider';
+    const mascot = MASCOTS[name];
     const corner = el(
       'div',
-      'corner',
-      '<div class="spider">' +
-        '<span class="spider-thread"></span>' +
-        `<span class="spider-icon">${icon}</span>` +
+      'corner mascot-' + name,
+      '<div class="mascot">' +
+        '<span class="mascot-thread"></span>' +
+        `<span class="mascot-icon">${iconHtml(mascot.icon)}</span>` +
         '</div>' +
-        '<span class="boo">Buh!</span>',
+        `<span class="boo">${escapeHtml(mascot.say)}</span>`,
     );
     corner.addEventListener('click', ev => {
       ev.stopPropagation();

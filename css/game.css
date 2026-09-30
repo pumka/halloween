@@ -178,32 +178,26 @@ button {
   cursor: pointer;
 }
 
-/* Dangling spider in the top-left cell */
-.spider {
+/* ---------- mascot in the top-left cell (one preset per kid) ---------- */
+.mascot {
   position: absolute;
-  top: 0;
   left: 50%;
+  top: 50%;
+  width: 44px;
+  margin: -22px 0 0 -22px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  transform-origin: top center;
-  animation: swing 3.2s ease-in-out infinite;
 }
-.spider-thread {
-  width: 2px;
-  height: 14px;
-  background: #6b6259;
-  animation: yoyo 5s ease-in-out infinite;
-}
-.spider-icon {
+.mascot-icon {
   font-size: 38px;
   line-height: 1;
-  margin-top: -4px;
 }
 .boo {
   position: absolute;
   top: 8px;
   left: 6px;
+  z-index: 1;
   padding: 2px 8px;
   border: 2px solid var(--ink);
   border-radius: 10px;
@@ -214,56 +208,8 @@ button {
   transform: scale(0.3);
   pointer-events: none;
 }
-.corner.scare .spider-thread {
-  animation: drop 1.4s cubic-bezier(0.2, 1.5, 0.4, 1);
-}
-.corner.scare .spider {
-  animation: wiggle 0.25s linear 4;
-}
 .corner.scare .boo {
   animation: boo 1.4s ease-out;
-}
-@keyframes swing {
-  0%,
-  100% {
-    transform: translateX(-50%) rotate(-10deg);
-  }
-  50% {
-    transform: translateX(-50%) rotate(10deg);
-  }
-}
-@keyframes yoyo {
-  0%,
-  100% {
-    height: 6px;
-  }
-  50% {
-    height: 26px;
-  }
-}
-@keyframes drop {
-  0% {
-    height: 6px;
-  }
-  25%,
-  75% {
-    height: 34px;
-  }
-  100% {
-    height: 14px;
-  }
-}
-@keyframes wiggle {
-  0%,
-  100% {
-    transform: translateX(-50%) rotate(0);
-  }
-  25% {
-    transform: translateX(-50%) rotate(-18deg);
-  }
-  75% {
-    transform: translateX(-50%) rotate(18deg);
-  }
 }
 @keyframes boo {
   0% {
@@ -280,6 +226,207 @@ button {
     transform: scale(0.8);
   }
 }
+
+/* Spider: hangs on a thread, swings, climbs; click = drop + wiggle */
+.mascot-spider .mascot {
+  top: 0;
+  margin-top: 0;
+  transform-origin: top center;
+  animation: spider-swing 3.2s ease-in-out infinite;
+}
+.mascot-thread {
+  display: none;
+}
+.mascot-spider .mascot-thread {
+  display: block;
+  width: 2px;
+  height: 14px;
+  background: #6b6259;
+  animation: spider-yoyo 5s ease-in-out infinite;
+}
+.mascot-spider .mascot-icon {
+  margin-top: -4px;
+}
+.mascot-spider.scare .mascot-thread {
+  animation: spider-drop 1.4s cubic-bezier(0.2, 1.5, 0.4, 1);
+}
+.mascot-spider.scare .mascot {
+  animation: spider-wiggle 0.25s linear 4;
+}
+@keyframes spider-swing {
+  0%,
+  100% {
+    transform: rotate(-10deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+}
+@keyframes spider-yoyo {
+  0%,
+  100% {
+    height: 6px;
+  }
+  50% {
+    height: 26px;
+  }
+}
+@keyframes spider-drop {
+  0% {
+    height: 6px;
+  }
+  25%,
+  75% {
+    height: 34px;
+  }
+  100% {
+    height: 14px;
+  }
+}
+@keyframes spider-wiggle {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(-18deg);
+  }
+  75% {
+    transform: rotate(18deg);
+  }
+}
+
+/* Bat: flaps and flies loops; click = somersault */
+.mascot-bat .mascot {
+  animation: bat-fly 4.5s ease-in-out infinite;
+}
+.mascot-bat .mascot-icon {
+  animation: bat-flap 0.3s ease-in-out infinite alternate;
+}
+.mascot-bat.scare .mascot {
+  animation: bat-flip 0.9s ease-in-out;
+}
+@keyframes bat-fly {
+  0%,
+  100% {
+    transform: translate(-30px, 6px) rotate(-10deg);
+  }
+  25% {
+    transform: translate(0, -14px) rotate(8deg);
+  }
+  50% {
+    transform: translate(30px, 6px) rotate(10deg);
+  }
+  75% {
+    transform: translate(0, 14px) rotate(-8deg);
+  }
+}
+@keyframes bat-flap {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0.6);
+  }
+}
+@keyframes bat-flip {
+  0% {
+    transform: translate(0, 0) rotate(0) scale(1);
+  }
+  50% {
+    transform: translate(0, -18px) rotate(180deg) scale(1.3);
+  }
+  100% {
+    transform: translate(0, 0) rotate(360deg) scale(1);
+  }
+}
+
+/* Pumpkin: hides at the bottom edge and peeks up; click = big jump */
+.mascot-pumpkin .mascot {
+  top: auto;
+  bottom: 0;
+  margin-top: 0;
+  transform-origin: bottom center;
+  animation: pumpkin-peek 5s ease-in-out infinite;
+}
+.mascot-pumpkin.scare .mascot {
+  animation: pumpkin-jump 1.2s ease-out;
+}
+@keyframes pumpkin-peek {
+  0%,
+  35%,
+  100% {
+    transform: translateY(70%);
+  }
+  45% {
+    transform: translateY(-4px) rotate(-8deg);
+  }
+  55% {
+    transform: translateY(-4px) rotate(8deg);
+  }
+  65% {
+    transform: translateY(-4px) rotate(0);
+  }
+  75% {
+    transform: translateY(70%);
+  }
+}
+@keyframes pumpkin-jump {
+  0% {
+    transform: translateY(70%);
+  }
+  30% {
+    transform: translateY(-30px) rotate(-12deg);
+  }
+  55% {
+    transform: translateY(-2px) scale(1.25, 0.75);
+  }
+  70% {
+    transform: translateY(-10px) scale(0.9, 1.1);
+  }
+  85% {
+    transform: translateY(-2px) scale(1);
+  }
+  100% {
+    transform: translateY(70%);
+  }
+}
+
+/* Ghost: floats and fades; click = swells and spins */
+.mascot-ghost .mascot {
+  animation: ghost-float 3.6s ease-in-out infinite;
+}
+.mascot-ghost.scare .mascot {
+  animation: ghost-spook 1.2s ease-in-out;
+}
+@keyframes ghost-float {
+  0%,
+  100% {
+    transform: translate(-12px, 8px);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translate(12px, -10px);
+    opacity: 1;
+  }
+}
+@keyframes ghost-spook {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  40% {
+    transform: scale(1.6) rotate(20deg);
+  }
+  70% {
+    transform: scale(1.6) rotate(-20deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+}
+
 .col-head {
   background: var(--head);
   display: flex;
