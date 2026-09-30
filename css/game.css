@@ -428,6 +428,24 @@ button { font-family: inherit; color: inherit; }
   to { transform: translateY(calc(100vh + 120px)) rotate(540deg); }
 }
 
+/* Wide screens: rules to the right of the board, so both are visible without scrolling. */
+@media (min-width: 1000px) {
+  #game { max-width: 1280px; }
+  .play {
+    display: grid;
+    grid-template-columns: minmax(480px, 640px) minmax(360px, 1fr);
+    gap: 28px;
+    align-items: start;
+  }
+  .drawer {
+    margin-top: 0;
+    position: sticky;
+    top: 12px;
+    max-height: calc(100vh - 24px);
+    overflow-y: auto;
+  }
+}
+
 @media (max-width: 480px) {
   .tile { width: 78px; min-height: 80px; }
   .rule { font-size: 16px; }

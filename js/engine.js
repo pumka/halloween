@@ -330,6 +330,9 @@
     }
 
     // Board
+    // Board and rules sit side by side on wide screens (see .play in game.css).
+    const play = el('div', 'play');
+    root.appendChild(play);
     const wrap = el('div', 'board-wrap');
     const grid = el('div', 'board');
     grid.style.gridTemplateColumns = `minmax(64px, auto) repeat(${m.nCols}, minmax(0, 1fr))`;
@@ -353,7 +356,7 @@
       }
     });
     wrap.appendChild(grid);
-    root.appendChild(wrap);
+    play.appendChild(wrap);
     this.wrap = wrap;
 
     // Rules drawer
@@ -379,7 +382,7 @@
       return card;
     });
     drawer.appendChild(list);
-    root.appendChild(drawer);
+    play.appendChild(drawer);
     this.ruleList = list;
 
     this.toast = el('div', 'toast');
