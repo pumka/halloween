@@ -3,7 +3,7 @@ window.KIDS = [
   { name: 'Alexia', icon: '🧛', page: 'alexia.html' },
   { name: 'Lukas', icon: '🧙', page: 'lukas.html' },
   { name: 'Olesia', icon: '🧟', page: 'olesia.html' },
-  { name: 'Olexii', icon: '👻', page: 'olexii.html' },
+  { name: 'Oleksii', icon: '👻', page: 'oleksii.html' },
 ];
 
 (function () {
