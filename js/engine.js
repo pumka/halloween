@@ -707,10 +707,15 @@
         `<h2>${escapeHtml(this.cfg.winTitle || 'Geschafft!')}</h2>` +
         `<p>${escapeHtml(this.cfg.winMessage || 'Super gemacht!')}</p>`,
     );
-    const btn = el('button', 'win-close', 'Zum Rätsel');
+    const btn = el('button', 'win-close', '✕');
     btn.type = 'button';
+    btn.setAttribute('aria-label', 'Schließen');
     btn.addEventListener('click', () => ov.remove());
     box.appendChild(btn);
+    // Clicking the dark backdrop also closes it.
+    ov.addEventListener('click', ev => {
+      if (ev.target === ov) ov.remove();
+    });
     ov.appendChild(box);
     document.body.appendChild(ov);
     if (celebrate) confetti();
