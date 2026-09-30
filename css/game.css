@@ -426,6 +426,13 @@ button {
     0 0 3px #fff,
     0 0 3px #fff;
 }
+/* Image icons scale with the text like emoji do. */
+.icon-img {
+  display: inline-block;
+  width: 1.15em;
+  height: 1.15em;
+  vertical-align: -0.2em;
+}
 .tag {
   font-weight: 600;
   hyphens: manual;

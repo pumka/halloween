@@ -245,6 +245,15 @@
     );
   }
 
+  // An icon is an emoji, or an image file path such as 'img/usb.svg'.
+  function iconHtml(icon) {
+    if (!icon) return '';
+    if (/\.(svg|png|jpe?g|gif|webp)$/i.test(icon)) {
+      return `<img class="icon-img" src="${escapeHtml(icon)}" alt="">`;
+    }
+    return escapeHtml(icon);
+  }
+
   // Item name as HTML, with "|" turned into soft hyphens (break points).
   function nameHtml(it) {
     return escapeHtml(it.display).replace(/\|/g, '&shy;');
@@ -370,7 +379,7 @@
   Game.prototype.itemHtml = function (row, item, small) {
     const it = this.model.rows[row].items[item];
     return (
-      `<span class="piece-icon">${it.icon ? escapeHtml(it.icon) : ''}</span>` +
+      `<span class="piece-icon">${iconHtml(it.icon)}</span>` +
       `<span class="piece-name${small ? ' small' : ''}">${nameHtml(it)}</span>`
     );
   };
@@ -398,7 +407,7 @@
       out +=
         `<span class="tag ${ROW_CLASSES[r % ROW_CLASSES.length]}">` +
         (it.icon
-          ? `<span class="tag-icon">${escapeHtml(it.icon)}</span>&#8288;`
+          ? `<span class="tag-icon">${iconHtml(it.icon)}</span>&#8288;`
           : '') +
         `${nameHtml(it)}</span>`;
       last = mt.index + mt[0].length;
@@ -443,9 +452,8 @@
         el(
           'div',
           'col-head',
-          (c.icon
-            ? `<span class="col-icon">${escapeHtml(c.icon)}</span>`
-            : '') + `<span class="col-label">${escapeHtml(c.label)}</span>`,
+          (c.icon ? `<span class="col-icon">${iconHtml(c.icon)}</span>` : '') +
+            `<span class="col-label">${escapeHtml(c.label)}</span>`,
         ),
       );
     });
