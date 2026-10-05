@@ -8,9 +8,9 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap"
     />
-    <link rel="stylesheet" href="css/game.css?v=345a909a" />
+    <link rel="stylesheet" href="css/game.css?v=b8dc9c4c" />
     <script src="js/menu.js?v=730d5bbb"></script>
-    <script src="js/engine.js?v=34097930"></script>
+    <script src="js/engine.js?v=d087f042"></script>
   </head>
   <body>
     <nav id="menu" class="menu"></nav>
@@ -114,8 +114,10 @@
         mascot: 'bat',
 
         // Scientist whose column is the key for the next puzzle. It blinks
-        // when the puzzle is solved and is listed in the completion box.
+        // when the puzzle is solved; the sentence is shown in the
+        // completion box (tools/check.js checks it matches the column).
         keyColumn: 'Kürbishose',
+        keySentence: 'Kürbishose benutzt den Magneten an der Sticking wall.',
 
         winEmoji: '🧪',
         winTitle: 'Rätsel gelöst!',

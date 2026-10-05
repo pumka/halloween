@@ -50,7 +50,10 @@ for (const page of pages) {
     const { row, item } = m.locate(cfg.keyColumn);
     const col = sols[0][row].indexOf(item);
     const key = sols[0].map((cells, r) => m.rows[r].items[cells[col]].name);
-    console.log(`  🔑 Schlüssel: ${m.columns[col].label} (${key.join(', ')})`);
+    console.log(`  🔑 ${m.columns[col].label}: ${cfg.keySentence || ''}`);
+    const missing = key.filter(n => !(cfg.keySentence || '').includes(n));
+    if (missing.length)
+      console.log('  ❌ Im Schlüsselsatz fehlt: ' + missing.join(', '));
   }
   const all = m.allRuleIdxs();
   const redundant = all.filter(i => {

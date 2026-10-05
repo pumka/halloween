@@ -393,9 +393,11 @@
     );
     names.sort((a, b) => b.it.name.length - a.it.name.length);
     if (!names.length) return escapeHtml(text);
+    // A name plus any letters glued to it ("Magneten" for "Magnet"),
+    // so an inflected word is highlighted as a whole.
     const re = new RegExp(
-      names.map(n => escapeRegex(n.it.name)).join('|'),
-      'g',
+      `(${names.map(n => escapeRegex(n.it.name)).join('|')})(\\p{L}*)`,
+      'gu',
     );
     const byName = new Map(names.map(n => [n.it.name, n]));
     let out = '',
@@ -403,14 +405,14 @@
       mt;
     while ((mt = re.exec(text))) {
       out += escapeHtml(text.slice(last, mt.index));
-      const { it, r } = byName.get(mt[0]);
+      const { it, r } = byName.get(mt[1]);
       // Word joiner (&#8288;) keeps the icon on the same line as the name.
       out +=
         `<span class="tag ${ROW_CLASSES[r % ROW_CLASSES.length]}">` +
         (it.icon
           ? `<span class="tag-icon">${iconHtml(it.icon)}</span>&#8288;`
           : '') +
-        `${nameHtml(it)}</span>`;
+        `${nameHtml(it)}${escapeHtml(mt[2])}</span>`;
       last = mt.index + mt[0].length;
     }
     return out + escapeHtml(text.slice(last));
@@ -759,24 +761,21 @@
     }, 2600);
   };
 
-  // The key column's items, one line per row, for the completion box.
+  // The key sentence (cfg.keySentence) for the completion box, with item
+  // names highlighted like in the rules. Without a sentence, the key
+  // column's items are listed instead.
   Game.prototype.keyHtml = function () {
     const col = this.keyCol();
     if (col < 0) return '';
-    const lines = this.model.rows
-      .map((row, r) => {
-        const it = row.items[this.board[r][col]];
-        return (
-          `<li><span class="key-label">${escapeHtml(row.label)}</span>` +
-          `<span class="key-item">${iconHtml(it.icon)} ` +
-          `${escapeHtml(it.name)}</span></li>`
-        );
-      })
-      .join('');
+    const text =
+      this.cfg.keySentence ||
+      this.model.rows
+        .map((row, r) => row.items[this.board[r][col]].name)
+        .join(' · ');
     const title = this.cfg.keyTitle || 'Dein Schlüssel für das nächste Rätsel:';
     return (
       `<div class="key-box"><div class="key-title">${escapeHtml(title)}` +
-      `</div><ul>${lines}</ul></div>`
+      `</div><div class="key-sentence">${this.ruleHtml(text)}</div></div>`
     );
   };
 
