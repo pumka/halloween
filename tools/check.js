@@ -46,6 +46,12 @@ for (const page of pages) {
         cells.map(i => m.rows[r].items[i].name.padEnd(15)).join(''),
     );
   });
+  if (cfg.keyColumn) {
+    const { row, item } = m.locate(cfg.keyColumn);
+    const col = sols[0][row].indexOf(item);
+    const key = sols[0].map((cells, r) => m.rows[r].items[cells[col]].name);
+    console.log(`  🔑 Schlüssel: ${m.columns[col].label} (${key.join(', ')})`);
+  }
   const all = m.allRuleIdxs();
   const redundant = all.filter(i => {
     const rest = all.filter(j => j !== i);

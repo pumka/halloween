@@ -308,6 +308,7 @@
     // Sanity check the puzzle so a parent notices mistakes while configuring.
     const problems = [];
     try {
+      if (this.cfg.keyColumn) m.locate(this.cfg.keyColumn);
       m.enumerate(this.board, S => {
         m.rules.forEach(f => f(S));
         return true;
@@ -340,7 +341,7 @@
     this.restore();
     this.render();
     this.updateRules(false);
-    if (this.isComplete()) this.showWin(false);
+    if (this.isComplete()) this.finish(false);
   };
 
   Game.prototype.restore = function () {
@@ -447,15 +448,15 @@
     const cellCols = `repeat(${m.nCols}, minmax(0, 1fr))`;
     grid.style.gridTemplateColumns = `minmax(64px, auto) ${cellCols}`;
     grid.appendChild(this.renderCorner());
-    m.columns.forEach(c => {
-      grid.appendChild(
-        el(
-          'div',
-          'col-head',
-          (c.icon ? `<span class="col-icon">${iconHtml(c.icon)}</span>` : '') +
-            `<span class="col-label">${escapeHtml(c.label)}</span>`,
-        ),
+    this.colHeads = m.columns.map(c => {
+      const head = el(
+        'div',
+        'col-head',
+        (c.icon ? `<span class="col-icon">${iconHtml(c.icon)}</span>` : '') +
+          `<span class="col-label">${escapeHtml(c.label)}</span>`,
       );
+      grid.appendChild(head);
+      return head;
     });
     this.cells = [];
     m.rows.forEach((row, r) => {
@@ -652,7 +653,7 @@
       this.paintCell(r, c, true);
       this.save();
       this.updateRules(true);
-      if (this.isComplete()) setTimeout(() => this.showWin(true), 700);
+      if (this.isComplete()) setTimeout(() => this.finish(true), 700);
       return;
     }
     const key = r + ',' + c;
@@ -732,6 +733,53 @@
     });
   };
 
+  // Column of the key scientist (cfg.keyColumn) in the solved board, or -1.
+  Game.prototype.keyCol = function () {
+    if (!this.cfg.keyColumn) return -1;
+    const { row, item } = this.model.locate(this.cfg.keyColumn);
+    return this.board[row].indexOf(item);
+  };
+
+  // Puzzle solved: blink the key column, then show the completion box.
+  Game.prototype.finish = function (celebrate) {
+    const col = this.keyCol();
+    if (col < 0) {
+      this.showWin(celebrate);
+      return;
+    }
+    const parts = [this.colHeads[col], ...this.cells.map(r => r[col])];
+    parts.forEach(p => {
+      p.classList.remove('key-blink');
+      void p.offsetWidth;
+      p.classList.add('key-blink');
+    });
+    setTimeout(() => {
+      parts.forEach(p => p.classList.remove('key-blink'));
+      this.showWin(celebrate);
+    }, 2600);
+  };
+
+  // The key column's items, one line per row, for the completion box.
+  Game.prototype.keyHtml = function () {
+    const col = this.keyCol();
+    if (col < 0) return '';
+    const lines = this.model.rows
+      .map((row, r) => {
+        const it = row.items[this.board[r][col]];
+        return (
+          `<li><span class="key-label">${escapeHtml(row.label)}</span>` +
+          `<span class="key-item">${iconHtml(it.icon)} ` +
+          `${escapeHtml(it.name)}</span></li>`
+        );
+      })
+      .join('');
+    const title = this.cfg.keyTitle || 'Dein Schlüssel für das nächste Rätsel:';
+    return (
+      `<div class="key-box"><div class="key-title">${escapeHtml(title)}` +
+      `</div><ul>${lines}</ul></div>`
+    );
+  };
+
   Game.prototype.showWin = function (celebrate) {
     const ov = el('div', 'win-overlay');
     const box = el(
@@ -740,7 +788,8 @@
       `<div class="win-emoji">` +
         `${escapeHtml(this.cfg.winEmoji || '🎃')}</div>` +
         `<h2>${escapeHtml(this.cfg.winTitle || 'Geschafft!')}</h2>` +
-        `<p>${escapeHtml(this.cfg.winMessage || 'Super gemacht!')}</p>`,
+        `<p>${escapeHtml(this.cfg.winMessage || 'Super gemacht!')}</p>` +
+        this.keyHtml(),
     );
     const btn = el('button', 'win-close', '✕');
     btn.type = 'button';
