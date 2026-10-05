@@ -671,6 +671,13 @@
     cell.classList.remove('shake');
     void cell.offsetWidth;
     cell.classList.add('shake');
+    // Drop the class afterwards so it can't block later animations
+    // (e.g. the key column blink).
+    cell.addEventListener(
+      'animationend',
+      () => cell.classList.remove('shake'),
+      { once: true },
+    );
 
     const conflicts = m.conflictingRules(this.board, r, c, item);
     conflicts.forEach(i => {

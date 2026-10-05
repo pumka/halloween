@@ -819,7 +819,8 @@ button {
   justify-content: center;
 }
 /* Key column: blinks golden when the puzzle is solved */
-.key-blink {
+.cell.key-blink,
+.col-head.key-blink {
   animation: key-blink 0.65s ease-in-out 4;
 }
 @keyframes key-blink {
