@@ -10,7 +10,7 @@
     />
     <link rel="stylesheet" href="css/game.css?v=a1e9c196" />
     <script src="js/menu.js?v=730d5bbb"></script>
-    <script src="js/engine.js?v=ef698626"></script>
+    <script src="js/engine.js?v=9b480f06"></script>
   </head>
   <body>
     <nav id="menu" class="menu"></nav>
@@ -77,36 +77,49 @@
         // Custom:  check: s => s.col('Kamm') > 2
         rules: [
           {
-            text: 'Totenkopf sortiert den Ordner.',
-            check: R.same('Totenkopf', 'Ordner'),
+            text:
+              'Schnarchgeist hat seinen Gegenstand in der Letter box ' +
+              'vergessen.',
+            check: R.same('Schnarchgeist', 'Letter box'),
           },
           {
-            text: 'Der Ordner schwimmt im Home pool.',
-            check: R.same('Ordner', 'Home pool'),
+            text: 'Rechts von der Letter box liegt der Pinsel.',
+            check: R.directlyRightOf('Pinsel', 'Letter box'),
           },
           {
-            text: 'Hexenschuss sitzt auf dem Pee chair.',
-            check: R.same('Hexenschuss', 'Pee chair'),
+            text: 'Der Pinsel liegt weder im Home pool noch auf dem Pee chair.',
+            check: R.all(
+              R.notSame('Pinsel', 'Home pool'),
+              R.notSame('Pinsel', 'Pee chair'),
+            ),
           },
           {
-            text: 'Der Pee chair steht ganz rechts.',
-            check: R.inColumn('Pee chair', 4),
+            text:
+              'Totenkopf und Hexenschuss hassen einander und befinden sich ' +
+              'so weit wie möglich voneinander entfernt.',
+            // One in the first column, the other in the last.
+            check: s =>
+              Math.abs(s.col('Totenkopf') - s.col('Hexenschuss')) === 3,
           },
           {
-            text: 'Wackelzahn arbeitet direkt links neben Hexenschuss.',
-            check: R.directlyLeftOf('Wackelzahn', 'Hexenschuss'),
+            text: 'Neben dem Pinsel liegen der Kamm und der Spiegel.',
+            check: R.all(
+              R.nextTo('Kamm', 'Pinsel'),
+              R.nextTo('Spiegel', 'Pinsel'),
+            ),
           },
           {
-            text: 'Wackelzahn malt mit dem Pinsel.',
-            check: R.same('Wackelzahn', 'Pinsel'),
+            text: 'Der Pee chair befindet sich nicht neben der Letter box.',
+            check: R.notNextTo('Pee chair', 'Letter box'),
           },
           {
-            text: 'Der Kamm liegt direkt links neben dem Pinsel.',
-            check: R.directlyLeftOf('Kamm', 'Pinsel'),
+            text: 'Totenkopf wäscht sich fünfmal am Tag.',
+            // He is at the Home pool (the bathtub).
+            check: R.same('Totenkopf', 'Home pool'),
           },
           {
-            text: 'Die Letter box steht neben dem Home pool.',
-            check: R.nextTo('Letter box', 'Home pool'),
+            text: 'Der Kamm gehört nicht Hexenschuss.',
+            check: R.notSame('Kamm', 'Hexenschuss'),
           },
         ],
 
@@ -116,8 +129,8 @@
         // Scientist whose column is the key for the next puzzle. It blinks
         // when the puzzle is solved; the sentence is shown in the
         // completion box (tools/check.js checks it matches the column).
-        keyColumn: 'Wackelzahn',
-        keySentence: 'Wackelzahn malt mit dem Pinsel im Clothes house.',
+        keyColumn: 'Totenkopf',
+        keySentence: 'Totenkopf sortiert den Ordner im Home pool.',
 
         winEmoji: '🧪',
         winTitle: 'Rätsel gelöst!',
