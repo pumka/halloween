@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Refrigerator: tall, two doors, handles, snowflake -->
+  <rect x="14" y="3" width="36" height="58" rx="6"
+        fill="#e8f4fb" stroke="#4a7fa6" stroke-width="2.5"/>
+  <path d="M14 23h36" stroke="#4a7fa6" stroke-width="2.5"/>
+  <rect x="18" y="9" width="3.5" height="9" rx="1.75" fill="#4a7fa6"/>
+  <rect x="18" y="28" width="3.5" height="14" rx="1.75" fill="#4a7fa6"/>
+  <g stroke="#3aa7e8" stroke-width="2.2" stroke-linecap="round">
+    <path d="M36 32v16M29 36l14 8M29 44l14 -8"/>
+    <path d="M33 33.5l3 2.5l3 -2.5M33 46.5l3 -2.5l3 2.5"/>
+  </g>
+</svg>

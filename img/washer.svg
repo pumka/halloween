@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Washing machine: white body, control panel, round door with water -->
+  <rect x="9" y="5" width="46" height="55" rx="6"
+        fill="#f4f6f9" stroke="#6b7480" stroke-width="2.5"/>
+  <path d="M9 17h46" stroke="#6b7480" stroke-width="2.5"/>
+  <circle cx="18" cy="11" r="2.5" fill="#3aa7e8"/>
+  <circle cx="26" cy="11" r="2.5" fill="#f08a24"/>
+  <rect x="35" y="9" width="14" height="4" rx="2" fill="#c7cdd5"/>
+  <circle cx="32" cy="38" r="15" fill="#d9dde3" stroke="#6b7480"
+          stroke-width="2.5"/>
+  <circle cx="32" cy="38" r="11" fill="#3aa7e8"/>
+  <path d="M21.5 40q5.25 -4 10.5 0t10.5 0v4a11 11 0 0 1 -21 0z"
+        fill="#1f78b4"/>
+  <circle cx="27" cy="33" r="2.5" fill="#fff" opacity=".85"/>
+  <circle cx="35" cy="31" r="1.6" fill="#fff" opacity=".85"/>
+  <circle cx="31" cy="28.5" r="1.1" fill="#fff" opacity=".85"/>
+</svg>

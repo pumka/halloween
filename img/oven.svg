@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Oven: knobs on top, glowing window, handle -->
+  <rect x="7" y="8" width="50" height="50" rx="6"
+        fill="#4b4f57" stroke="#2b2320" stroke-width="2.5"/>
+  <circle cx="16" cy="16" r="3" fill="#d9dde3"/>
+  <circle cx="25" cy="16" r="3" fill="#d9dde3"/>
+  <circle cx="34" cy="16" r="3" fill="#d9dde3"/>
+  <rect x="41" y="13.5" width="10" height="5" rx="1.5" fill="#7ed957"/>
+  <rect x="14" y="25" width="36" height="5" rx="2.5" fill="#c7cdd5"/>
+  <rect x="13" y="33" width="38" height="20" rx="3"
+        fill="#f08a24" stroke="#2b2320" stroke-width="2"/>
+  <rect x="16" y="36" width="32" height="14" rx="2" fill="#ffc94d"/>
+  <path d="M21 47q3 -6 0 -9M32 47q3 -6 0 -9M43 47q3 -6 0 -9" fill="none"
+        stroke="#e34b4b" stroke-width="2" stroke-linecap="round"/>
+</svg>
