@@ -369,6 +369,7 @@
 
   Game.prototype.reset = function () {
     storageDel(this.storageKey);
+    this.cells.flat().forEach(cell => clearTimeout(cell.hintTimer));
     this.root.innerHTML = '';
     this.givens.clear();
     this.init();
@@ -715,20 +716,47 @@
     this.toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
   };
 
-  // A row with just one empty cell: that cell shimmers now and then, hinting
-  // that it can be filled right away. Each cell gets its own random delay.
+  // A row with just one empty cell: now and then a few golden sparkles
+  // twinkle in that cell, hinting that it can be filled right away.
+  // Each cell runs its own randomly timed loop.
   Game.prototype.updateHints = function () {
     this.board.forEach((cells, r) => {
       const empty = cells.map((v, c) => (v < 0 ? c : -1)).filter(c => c >= 0);
       this.cells[r].forEach((cell, c) => {
         const hint = empty.length === 1 && empty[0] === c;
-        if (hint && !cell.classList.contains('hint')) {
-          cell.style.setProperty('--hint-delay', 3 + Math.random() * 5 + 's');
+        if (hint && !cell.hintTimer) {
+          const loop = delay => {
+            cell.hintTimer = setTimeout(() => {
+              sparkle(cell);
+              loop(6000 + Math.random() * 4000);
+            }, delay);
+          };
+          loop(3000 + Math.random() * 5000);
+        } else if (!hint && cell.hintTimer) {
+          clearTimeout(cell.hintTimer);
+          cell.hintTimer = null;
         }
-        cell.classList.toggle('hint', hint);
       });
     });
   };
+
+  // A small burst of twinkling stars at random spots in the cell.
+  function sparkle(cell) {
+    if (cell.classList.contains('filled')) return;
+    cell.classList.remove('magic');
+    void cell.offsetWidth;
+    cell.classList.add('magic');
+    const count = 4 + Math.floor(Math.random() * 3);
+    for (let i = 0; i < count; i++) {
+      const star = el('span', 'sparkle', '✦');
+      star.style.left = 12 + Math.random() * 76 + '%';
+      star.style.top = 12 + Math.random() * 76 + '%';
+      star.style.fontSize = 14 + Math.random() * 12 + 'px';
+      star.style.animationDelay = i * 0.18 + Math.random() * 0.2 + 's';
+      cell.appendChild(star);
+      setTimeout(() => star.remove(), 2200);
+    }
+  }
 
   Game.prototype.updateRules = function (animate) {
     const flags = this.model.entailed(this.board);
