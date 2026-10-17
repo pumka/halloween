@@ -716,7 +716,10 @@
   Game.prototype.updateRules = function (animate) {
     const flags = this.model.entailed(this.board);
     const cards = this.ruleCards;
-    const first = animate ? cards.map(c => c.getBoundingClientRect()) : null;
+    // Layout positions (offsetLeft/Top ignore running transforms, so a card
+    // that is mid-animation doesn't look like it moved).
+    const pos = card => [card.offsetLeft, card.offsetTop];
+    const first = animate ? cards.map(pos) : null;
     const newlyMet = [];
     cards.forEach((card, i) => {
       if (flags[i] && !card.classList.contains('met')) newlyMet.push(card);
@@ -725,25 +728,38 @@
     const order = cards
       .map((_, i) => i)
       .sort((a, b) => flags[a] - flags[b] || a - b);
-    order.forEach(i => this.ruleList.appendChild(cards[i]));
+    // Re-insert only when the order changes: moving an element in the DOM
+    // restarts its CSS animations.
+    const current = [...this.ruleList.children];
+    if (order.some((i, k) => current[k] !== cards[i])) {
+      order.forEach(i => this.ruleList.appendChild(cards[i]));
+    }
     const met = flags.filter(Boolean).length;
     this.counter.innerHTML = `Regeln erfüllt: <b>${met}/${flags.length}</b>`;
     if (!animate) return;
+    // One-off animations (not CSS classes), so nothing can replay later:
+    // moved cards slide to their new place, a newly met card also pops in.
     cards.forEach((card, i) => {
-      const last = card.getBoundingClientRect();
-      const dx = first[i].left - last.left,
-        dy = first[i].top - last.top;
-      if (dx || dy) {
-        card.animate(
-          [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }],
-          { duration: 600, easing: 'cubic-bezier(.2,.8,.2,1)' },
-        );
-      }
-    });
-    newlyMet.forEach(card => {
-      card.classList.remove('just-met');
-      void card.offsetWidth;
-      card.classList.add('just-met');
+      const [x, y] = pos(card);
+      const dx = first[i][0] - x,
+        dy = first[i][1] - y;
+      const isNew = newlyMet.includes(card);
+      if (!dx && !dy && !isNew) return;
+      const move = `translate(${dx}px, ${dy}px)`;
+      card.animate(
+        [
+          isNew
+            ? { transform: `${move} scale(0.4)`, opacity: 0 }
+            : { transform: move },
+          { transform: 'none', opacity: 1 },
+        ],
+        {
+          duration: isNew ? 650 : 600,
+          easing: isNew
+            ? 'cubic-bezier(.2,1.4,.4,1)'
+            : 'cubic-bezier(.2,.8,.2,1)',
+        },
+      );
     });
   };
 

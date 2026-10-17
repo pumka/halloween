@@ -731,9 +731,6 @@ button {
 .rule.met .rule-num {
   background: var(--green-ink);
 }
-.rule.just-met {
-  animation: pop 0.5s cubic-bezier(0.2, 1.6, 0.4, 1);
-}
 
 .rule.violated {
   background: #ffd1d1;
