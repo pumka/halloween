@@ -467,6 +467,42 @@ button {
   align-items: center;
   justify-content: center;
 }
+/* Last empty cell of a row: a soft golden shimmer every few seconds */
+.cell.hint::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 35%,
+    rgba(255, 210, 90, 0.55) 50%,
+    transparent 65%
+  );
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  opacity: 0;
+  animation: hint-shimmer 7s ease-in-out infinite;
+  animation-delay: var(--hint-delay, 4s);
+}
+@keyframes hint-shimmer {
+  0%,
+  78% {
+    opacity: 0;
+    background-position: 100% 0;
+  }
+  82% {
+    opacity: 1;
+  }
+  94% {
+    opacity: 1;
+    background-position: 0% 0;
+  }
+  100% {
+    opacity: 0;
+    background-position: 0% 0;
+  }
+}
 .cell:not(.filled):hover {
   background: #e3e8ef;
 }

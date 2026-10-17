@@ -341,6 +341,7 @@
     this.restore();
     this.render();
     this.updateRules(false);
+    this.updateHints();
     if (this.isComplete()) this.finish(false);
   };
 
@@ -660,6 +661,7 @@
       this.paintCell(r, c, true);
       this.save();
       this.updateRules(true);
+      this.updateHints();
       if (this.isComplete()) setTimeout(() => this.finish(true), 700);
       return;
     }
@@ -711,6 +713,21 @@
     t.classList.add('show');
     clearTimeout(this.toastTimer);
     this.toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+  };
+
+  // A row with just one empty cell: that cell shimmers now and then, hinting
+  // that it can be filled right away. Each cell gets its own random delay.
+  Game.prototype.updateHints = function () {
+    this.board.forEach((cells, r) => {
+      const empty = cells.map((v, c) => (v < 0 ? c : -1)).filter(c => c >= 0);
+      this.cells[r].forEach((cell, c) => {
+        const hint = empty.length === 1 && empty[0] === c;
+        if (hint && !cell.classList.contains('hint')) {
+          cell.style.setProperty('--hint-delay', 3 + Math.random() * 5 + 's');
+        }
+        cell.classList.toggle('hint', hint);
+      });
+    });
   };
 
   Game.prototype.updateRules = function (animate) {
