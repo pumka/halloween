@@ -642,6 +642,13 @@ button {
   grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
   gap: 12px;
 }
+.rules.long {
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+.rules.long .rule {
+  font-size: 16px;
+  padding: 14px 12px 12px;
+}
 .rule {
   position: relative;
   background: var(--cream);

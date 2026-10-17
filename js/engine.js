@@ -496,6 +496,11 @@
     bar.appendChild(resetBtn);
     drawer.appendChild(bar);
     const list = el('div', 'rules');
+    // Long tips get wider cards so they don't turn into tall columns.
+    const avgLen =
+      cfg.rules.reduce((n, rule) => n + rule.text.length, 0) /
+      Math.max(1, cfg.rules.length);
+    if (avgLen > 70) list.classList.add('long');
     this.ruleCards = cfg.rules.map((rule, i) => {
       const card = el(
         'div',

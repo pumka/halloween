@@ -8,9 +8,9 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap"
     />
-    <link rel="stylesheet" href="css/game.css?v=90f146cb" />
+    <link rel="stylesheet" href="css/game.css?v=a1e9c196" />
     <script src="js/menu.js?v=730d5bbb"></script>
-    <script src="js/engine.js?v=a2ebd2eb"></script>
+    <script src="js/engine.js?v=ef698626"></script>
   </head>
   <body>
     <nav id="menu" class="menu"></nav>
@@ -67,7 +67,10 @@
         ],
 
         // Already placed when the game starts: [name, column number].
-        given: [['Brille', 1]],
+        given: [
+          ['Hirnschmalz', 3],
+          ['Würfel', 4],
+        ],
 
         // Rules: text for the kids + check.
         // Item names in the text get highlighted automatically.
@@ -77,36 +80,39 @@
         // Custom:  check: s => s.col('Kamm') > 2
         rules: [
           {
-            text: 'Giftmaker trägt die Brille.',
-            check: R.same('Giftmaker', 'Brille'),
+            text:
+              'Professor Giftmaker und Professor Gänsehaut hassen einander ' +
+              'und befinden sich so weit wie möglich voneinander entfernt.',
+            // One in the first column, the other in the last.
+            check: s => Math.abs(s.col('Giftmaker') - s.col('Gänsehaut')) === 3,
           },
           {
-            text: 'Hirnschmalz speichert alles auf dem USB.',
+            text:
+              'Der Professor links von Professor Hirnschmalz vergisst ' +
+              'ständig alles und trägt deshalb immer ein Heft bei sich.',
+            check: R.directlyLeftOf('Heft', 'Hirnschmalz'),
+          },
+          {
+            text:
+              'Die beiden Orte, an denen Kleidung behandelt wird, befinden ' +
+              'sich rechts. Zuerst ist die Kleidung nass, danach trocken.',
+            check: R.all(
+              R.inColumn('Clothes swimmer', 3),
+              R.inColumn('Dry clothes box', 4),
+            ),
+          },
+          {
+            text:
+              'Der Professor rechts von Giftmaker ist sehr zerstreut und ' +
+              'könnte seinen Gegenstand sogar in die Hot box legen.',
+            check: R.directlyRightOf('Hot box', 'Giftmaker'),
+          },
+          {
+            text:
+              'Professor Hirnschmalz hat diesen Gegenstand einmal zufällig ' +
+              'mitgewaschen. Seltsamerweise blieben alle darauf ' +
+              'gespeicherten Daten erhalten.',
             check: R.same('Hirnschmalz', 'USB'),
-          },
-          {
-            text: 'Der USB steckt im Clothes swimmer.',
-            check: R.same('USB', 'Clothes swimmer'),
-          },
-          {
-            text: 'Gänsehaut spielt mit dem Würfel.',
-            check: R.same('Gänsehaut', 'Würfel'),
-          },
-          {
-            text: 'Zitterhand arbeitet direkt links neben Hirnschmalz.',
-            check: R.directlyLeftOf('Zitterhand', 'Hirnschmalz'),
-          },
-          {
-            text: 'Das Heft liegt in der Hot box.',
-            check: R.same('Heft', 'Hot box'),
-          },
-          {
-            text: 'Der Würfel liegt nicht im Cold closet.',
-            check: R.notSame('Würfel', 'Cold closet'),
-          },
-          {
-            text: 'Die Dry clothes box steht ganz rechts.',
-            check: R.inColumn('Dry clothes box', 4),
           },
         ],
 
@@ -116,8 +122,8 @@
         // Scientist whose column is the key for the next puzzle. It blinks
         // when the puzzle is solved; the sentence is shown in the
         // completion box (tools/check.js checks it matches the column).
-        keyColumn: 'Zitterhand',
-        keySentence: 'Zitterhand schreibt im Heft in der Hot box.',
+        keyColumn: 'Giftmaker',
+        keySentence: 'Giftmaker trägt die Brille im Cold closet.',
 
         winEmoji: '🧪',
         winTitle: 'Rätsel gelöst!',
