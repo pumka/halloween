@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Magnetic whiteboard on legs, with notes held by magnets -->
+  <path d="M16 46l-5 15M48 46l5 15" stroke="#8a96a3" stroke-width="3"
+        stroke-linecap="round"/>
+  <rect x="4" y="6" width="56" height="40" rx="3"
+        fill="#ffffff" stroke="#8a96a3" stroke-width="3"/>
+  <path d="M8 46h48" stroke="#8a96a3" stroke-width="4"
+        stroke-linecap="round"/>
+  <rect x="10" y="13" width="15" height="13" fill="#ffe27a"
+        transform="rotate(-6 17.5 19.5)"/>
+  <rect x="34" y="12" width="16" height="12" fill="#a8e6ff"
+        transform="rotate(5 42 18)"/>
+  <rect x="24" y="29" width="14" height="11" fill="#ffc2d6"
+        transform="rotate(-3 31 34.5)"/>
+  <circle cx="17" cy="13" r="3.2" fill="#e34b4b"/>
+  <circle cx="42" cy="12" r="3.2" fill="#2f7bd0"/>
+  <circle cx="31" cy="29" r="3.2" fill="#2f9a6e"/>
+  <path d="M43 34q4 -5 8 0" fill="none" stroke="#7a4fc4" stroke-width="2"
+        stroke-linecap="round"/>
+</svg>
