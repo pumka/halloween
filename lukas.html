@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Rätsel – Lukas</title>
+    <title>Rätsel – Olesia</title>
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap"
@@ -18,8 +18,8 @@
     <script>
       const R = LogicGame.rules;
       LogicGame.start({
-        id: 'lukas',
-        title: 'Die Geisterforscher',
+        id: 'olesia',
+        title: 'Das Gruselinstitut',
         intro:
           'Wer arbeitet in welchem Labor, mit welchem Gegenstand ' +
           'und an welchem Ort?',
@@ -40,34 +40,34 @@
           {
             label: 'Wissenschaftler',
             items: [
-              { name: 'Kürbis|hose', icon: '🎃' },
-              { name: 'Schrecke|schnecke', icon: '🐌' },
-              { name: 'Fleder|bart', icon: '🦇' },
-              { name: 'Grusel|fuß', icon: '🦶' },
+              { name: 'Nerven|player', icon: '🎧' },
+              { name: 'Spinnen|bein', icon: '🕷️' },
+              { name: 'Blut|wurst', icon: '🌭' },
+              { name: 'Knochen|bruch', icon: '🦴' },
             ],
           },
           {
             label: 'Gegenstand',
             items: [
-              { name: 'Magnet', icon: '🧲' },
-              { name: 'Löffel', icon: '🥄' },
-              { name: 'Flasche', icon: '🍾' },
-              { name: 'Hand|schuh', icon: '🧤' },
+              { name: 'Karte', icon: '🗺️' },
+              { name: 'Schlüssel', icon: '🔑' },
+              { name: 'Lupe', icon: '🔍' },
+              { name: 'Kerze', icon: '🕯️' },
             ],
           },
           {
             label: 'Ort',
             items: [
-              { name: 'Sticking wall', icon: '🩹' },
-              { name: 'Book wall', icon: '🧱' },
-              { name: 'Sleeping table', icon: '😴' },
-              { name: 'Roof room', icon: '🏚️' },
+              { name: 'Moving picture box', icon: '🏃' },
+              { name: 'Plate washer', icon: '🍽️' },
+              { name: 'Dust sucker', icon: '💨' },
+              { name: 'Shoe house', icon: '👟' },
             ],
           },
         ],
 
         // Already placed when the game starts: [name, column number].
-        given: [['Flasche', 3]],
+        given: [['Spinnenbein', 2]],
 
         // Rules: text for the kids + check.
         // Item names in the text get highlighted automatically.
@@ -77,47 +77,47 @@
         // Custom:  check: s => s.col('Kamm') > 2
         rules: [
           {
-            text: 'Gruselfuß trägt den Handschuh.',
-            check: R.same('Gruselfuß', 'Handschuh'),
+            text: 'Knochenbruch arbeitet ganz rechts.',
+            check: R.inColumn('Knochenbruch', 4),
           },
           {
-            text: 'Der Handschuh liegt im Roof room.',
-            check: R.same('Handschuh', 'Roof room'),
+            text: 'Knochenbruch leuchtet mit der Kerze.',
+            check: R.same('Knochenbruch', 'Kerze'),
           },
           {
-            text: 'Der Roof room ist ganz rechts.',
-            check: R.inColumn('Roof room', 4),
+            text: 'Die Kerze steht im Shoe house.',
+            check: R.same('Kerze', 'Shoe house'),
           },
           {
-            text: 'Kürbishose arbeitet direkt links neben Schreckeschnecke.',
-            check: R.directlyLeftOf('Kürbishose', 'Schreckeschnecke'),
+            text: 'Blutwurst sucht mit der Lupe.',
+            check: R.same('Blutwurst', 'Lupe'),
           },
           {
-            text: 'Der Magnet klebt an der Sticking wall.',
-            check: R.same('Magnet', 'Sticking wall'),
+            text: 'Nervenplayer arbeitet irgendwo links von Blutwurst.',
+            check: R.leftOf('Nervenplayer', 'Blutwurst'),
           },
           {
-            text: 'Flederbart trinkt aus der Flasche.',
-            check: R.same('Flederbart', 'Flasche'),
+            text: 'Der Schlüssel liegt im Plate washer.',
+            check: R.same('Schlüssel', 'Plate washer'),
           },
           {
-            text: 'Der Löffel liegt direkt links neben der Flasche.',
-            check: R.directlyLeftOf('Löffel', 'Flasche'),
+            text: 'Der Plate washer steht direkt links neben dem Dust sucker.',
+            check: R.directlyLeftOf('Plate washer', 'Dust sucker'),
           },
           {
-            text: 'Die Book wall steht nicht neben dem Roof room.',
-            check: R.notNextTo('Book wall', 'Roof room'),
+            text: 'Die Karte liegt nicht beim Dust sucker.',
+            check: R.notSame('Karte', 'Dust sucker'),
           },
         ],
 
         // Creature in the top-left cell: spider, bat, pumpkin or ghost.
-        mascot: 'bat',
+        mascot: 'pumpkin',
 
         // Scientist whose column is the key for the next puzzle. It blinks
         // when the puzzle is solved; the sentence is shown in the
         // completion box (tools/check.js checks it matches the column).
-        keyColumn: 'Kürbishose',
-        keySentence: 'Kürbishose klebt den Magneten an die Sticking wall.',
+        keyColumn: 'Knochenbruch',
+        keySentence: 'Knochenbruch leuchtet mit der Kerze im Shoe house.',
 
         winEmoji: '🧪',
         winTitle: 'Rätsel gelöst!',
