@@ -728,10 +728,10 @@
           const loop = delay => {
             cell.hintTimer = setTimeout(() => {
               sparkle(cell);
-              loop(6000 + Math.random() * 4000);
+              loop(3000 + Math.random() * 2000);
             }, delay);
           };
-          loop(3000 + Math.random() * 5000);
+          loop(1500 + Math.random() * 2500);
         } else if (!hint && cell.hintTimer) {
           clearTimeout(cell.hintTimer);
           cell.hintTimer = null;
