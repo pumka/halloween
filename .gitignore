@@ -2,3 +2,4 @@
 task*.png
 example*.jpg
 .idea/
+.local/
