@@ -1,0 +1,362 @@
+/* Picture puzzles (js/pictures.js): big pictures, no text. */
+.pg-main {
+  --s: min(19vmin, 120px); /* size of one picture card */
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 4px 12px 24px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.pg-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.pg-progress {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+.pg-dot {
+  width: min(10vw, 44px);
+  height: min(10vw, 44px);
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--cream);
+  font-size: min(5vw, 22px);
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+.pg-dot {
+  filter: grayscale(1);
+  opacity: 0.45;
+}
+.pg-dot.done {
+  filter: none;
+  opacity: 1;
+  background: #ffd84d;
+}
+.pg-dot.now {
+  filter: none;
+  opacity: 1;
+  background: var(--orange);
+  transform: scale(1.15);
+}
+
+/* ---------- pictures ---------- */
+.pic {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--s);
+  height: var(--s);
+}
+.glyph {
+  font-size: calc(var(--s) * 0.68 * var(--k, 1));
+  line-height: 1;
+  display: block;
+}
+.glyph.sil {
+  filter: brightness(0);
+}
+.pic.hole .glyph {
+  filter: brightness(0);
+  opacity: 0.22;
+}
+.pic.shape svg {
+  width: 82%;
+  height: 82%;
+  filter: drop-shadow(0 3px 0 rgba(43, 35, 32, 0.35));
+}
+.pic.shape.hole svg {
+  filter: none;
+  opacity: 0.85;
+}
+/* Halves: the left half ends at the card's right edge and the right half
+   starts at the left edge, so two cards side by side make one picture. */
+.pic.half-left .glyph,
+.pic.half-right .glyph {
+  position: absolute;
+  transform: translateX(-50%);
+}
+.pic.half-left .glyph {
+  left: 100%;
+  clip-path: inset(-10% 50% -10% -10%);
+}
+.pic.half-right .glyph {
+  left: 0;
+  clip-path: inset(-10% -10% -10% 50%);
+}
+
+/* ---------- cards ---------- */
+.pg-piece,
+.pg-target,
+.pg-fixed {
+  border: 4px solid var(--ink);
+  border-radius: 20px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: calc(var(--s) + 8px);
+  height: calc(var(--s) + 8px);
+  overflow: hidden;
+}
+.pg-piece {
+  cursor: grab;
+  touch-action: none;
+  box-shadow: 0 6px 0 var(--ink);
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s,
+    opacity 0.15s;
+}
+.pg-piece.selected {
+  background: #fff3c4;
+  border-color: var(--orange);
+  transform: translateY(-6px) scale(1.06);
+  box-shadow: 0 10px 0 var(--orange);
+}
+.pg-piece.lifted {
+  opacity: 0.3;
+}
+.pg-piece.used {
+  cursor: default;
+}
+.pg-target {
+  border-style: dashed;
+  background: rgba(255, 255, 255, 0.55);
+  transition:
+    background 0.15s,
+    transform 0.15s;
+}
+.pg-target.hover {
+  background: #fff3c4;
+  transform: scale(1.06);
+}
+.pg-target.filled {
+  border-style: solid;
+  background: var(--green);
+  animation: pop 0.45s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+.pg-ghost {
+  position: fixed;
+  z-index: 40;
+  pointer-events: none;
+  margin: 0;
+  transform: scale(1.1) rotate(-3deg);
+  box-shadow: 0 14px 20px rgba(0, 0, 0, 0.25);
+  background: #fff3c4;
+}
+.wiggle {
+  animation: shake 0.45s;
+}
+
+.pg-pool {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 26px;
+  padding: 16px;
+  min-height: calc(var(--s) + 40px);
+  background: rgba(155, 109, 74, 0.18);
+  border-radius: 26px;
+}
+
+/* ---------- connect: two columns, lines in between ---------- */
+.lv-connect {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  max-width: 520px;
+  margin: 0 auto;
+}
+.pg-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 1;
+}
+.lv-connect .pg-target.filled {
+  background: #fff;
+  animation: none;
+}
+.lv-connect .pg-piece.used {
+  box-shadow: 0 6px 0 var(--green-ink);
+  border-color: var(--green-ink);
+}
+.lv-connect .pg-target.matched {
+  border-color: var(--green-ink);
+}
+.pg-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+.pg-lines line {
+  stroke-width: 7;
+  stroke-linecap: round;
+}
+.pg-lines line.live {
+  stroke: var(--orange);
+  stroke-dasharray: 2 14;
+}
+.pg-lines line.done {
+  stroke: var(--purple);
+}
+
+/* ---------- pairs and halves ---------- */
+.pg-pairs {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  justify-content: center;
+  gap: 16px 34px;
+}
+.pg-pair {
+  display: flex;
+  gap: 8px;
+}
+.lv-halves .pg-pair {
+  gap: 0;
+}
+.lv-halves .pg-fixed {
+  border-right: none;
+  border-radius: 20px 0 0 20px;
+}
+.lv-halves .pg-pair .pg-target {
+  border-radius: 0 20px 20px 0;
+}
+.lv-halves .pg-pair .pg-target.filled {
+  background: #fff;
+  border-left: none;
+}
+
+/* ---------- holes ---------- */
+.pg-holes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 14px;
+  padding: 18px;
+  background: var(--drawer);
+  border: 4px solid var(--ink);
+  border-radius: 26px;
+  box-shadow: inset 0 -8px 0 rgba(0, 0, 0, 0.18);
+}
+.pg-holes .pg-target {
+  border-color: var(--drawer-edge);
+  background: rgba(255, 247, 220, 0.25);
+}
+.pg-holes .pg-target.filled {
+  background: var(--cream);
+}
+
+/* ---------- pattern rows ---------- */
+.lv-pattern {
+  /* six cards per row must fit on a phone */
+  --s: min(calc((100vw - 120px) / 6), 86px);
+}
+.pg-patterns {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+.pg-seq {
+  display: flex;
+  gap: 6px;
+}
+.pg-seq .pg-fixed {
+  border-width: 3px;
+  border-radius: 16px;
+}
+.pg-seq .pg-target {
+  margin-left: 10px;
+  border-color: var(--orange);
+  animation: glow 2s ease-in-out infinite;
+}
+.pg-seq .pg-target.filled {
+  animation: pop 0.45s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+@keyframes glow {
+  50% {
+    background: #fff3c4;
+  }
+}
+
+/* Note for the adult who plays along */
+.pg-help {
+  max-width: 520px;
+  margin: 26px auto 0;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.6);
+  font-size: 15px;
+  line-height: 1.4;
+  text-align: center;
+  opacity: 0.8;
+}
+.pg-help:empty {
+  display: none;
+}
+
+/* ---------- hint hand, sparks, level done ---------- */
+.pg-hand,
+.pg-spark {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 80;
+  pointer-events: none;
+  line-height: 1;
+}
+.pg-hand {
+  font-size: 54px;
+  margin: -6px 0 0 -27px;
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.3));
+}
+.pg-spark {
+  font-size: 26px;
+  margin: -13px 0 0 -13px;
+}
+.pg-win .win-emoji {
+  font-size: 110px;
+}
+.pg-trophies {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  font-size: 34px;
+  margin: 8px 0;
+}
+.pg-trophies span {
+  animation: bob 1.4s ease-in-out infinite;
+}
+.pg-next {
+  margin-top: 12px;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border: 4px solid var(--ink);
+  background: var(--green);
+  box-shadow: 0 6px 0 var(--ink);
+  font-size: 54px;
+  cursor: pointer;
+  animation: glow-next 1.4s ease-in-out infinite;
+}
+@keyframes glow-next {
+  50% {
+    transform: scale(1.08);
+  }
+}

@@ -16,6 +16,8 @@ for (const page of pages) {
   const script = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)]
     .map(m => m[1])
     .join('\n');
+  // Picture pages (js/pictures.js) have no logic puzzle to check.
+  if (!script.includes('LogicGame.start')) continue;
   let cfg;
   new Function('LogicGame', script)({
     rules,

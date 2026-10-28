@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bilder – Vasyl</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap"
+    />
+    <link rel="stylesheet" href="css/game.css?v=d6938d17" />
+    <link rel="stylesheet" href="css/pictures.css?v=11e8fe52" />
+    <script src="js/menu.js?v=20f97f17"></script>
+    <script src="js/pictures.js?v=27835b21"></script>
+  </head>
+  <body>
+    <nav id="menu" class="menu"></nav>
+    <main id="game" class="pg-main"></main>
+    <script>
+      // Seven short picture levels, no reading needed.
+      // icon: shown in the progress bar; reward: shown when the level is done;
+      // help: note for the adult who plays along (Vasyl doesn't read).
+      PictureGame.start({
+        id: 'vasyl',
+        levels: [
+          // Same pictures: draw a line from each picture to its twin.
+          {
+            type: 'connect',
+            icon: '🎃',
+            reward: '🍬',
+            help:
+              'Gleiche Bilder verbinden: ein Bild links antippen oder ziehen, ' +
+              'dann sein Gegenstück rechts. Die Hand 👆 zeigt jeden Level ' +
+              'einen Zug vor und wiederholt ihn nach 15 Sekunden Pause. ' +
+              'Oben kann man zu jedem Level springen.',
+            pairs: [
+              ['🎃', '🎃'],
+              ['👻', '👻'],
+              ['🦇', '🦇'],
+              ['🍭', '🍭'],
+            ],
+          },
+          // Picture → its black shadow.
+          {
+            type: 'connect',
+            icon: '👻',
+            reward: '🍫',
+            help: 'Jedes Bild zu seinem schwarzen Schatten ziehen.',
+            pairs: [
+              ['🦉', { e: '🦉', sil: true }],
+              ['🍄', { e: '🍄', sil: true }],
+              ['🧙', { e: '🧙', sil: true }],
+              ['🏰', { e: '🏰', sil: true }],
+            ],
+          },
+          // Who needs what? Put the thing in the empty box.
+          {
+            type: 'pairs',
+            icon: '🦇',
+            reward: '🍪',
+            help: 'Wer braucht was? Das passende Ding unten in das leere Feld daneben ziehen.',
+            pairs: [
+              ['🐶', '🦴'],
+              ['🕷️', '🕸️'],
+              ['🐭', '🧀'],
+              ['🧙', '🧹'],
+            ],
+          },
+          // Which half is missing?
+          {
+            type: 'halves',
+            icon: '🕷️',
+            reward: '🧁',
+            help: 'Welche Hälfte fehlt? Die rechte Hälfte von unten an die linke ziehen – dann ist das Bild ganz.',
+            items: ['🎃', '🐸', '🍓', '🐝'],
+          },
+          // Shape sorter: every shape into its hole.
+          {
+            type: 'holes',
+            icon: '🔮',
+            reward: '🍩',
+            help: 'Formen sortieren: jede Form in das Loch mit derselben Form.',
+            items: [
+              'shape:circle:#e34b4b',
+              'shape:square:#5b9ee6',
+              'shape:triangle:#2f9a6e',
+              'shape:star:#ffc832',
+              'shape:heart:#c23c7a',
+              'shape:moon:#7a4fc4',
+            ],
+          },
+          // What comes next? The last picture of each row goes in the box.
+          {
+            type: 'pattern',
+            icon: '🧙',
+            reward: '🍭',
+            help: 'Was kommt als Nächstes? In jeder Reihe wiederholt sich ein Muster – das fehlende Bild in das leuchtende Feld ziehen.',
+            rows: [
+              ['🎃', '👻', '🎃', '👻', '🎃', '👻'],
+              ['🦇', '🦇', '🍬', '🦇', '🦇', '🍬'],
+              ['🍭', '🕷️', '🎃', '🍭', '🕷️', '🎃'],
+            ],
+            extra: ['🦇', '🍭'],
+          },
+          // From small to big.
+          {
+            type: 'holes',
+            sizes: true,
+            icon: '🏆',
+            reward: '🏆',
+            help: 'Von klein nach groß: die Kürbisse in die Löcher mit der passenden Größe stellen.',
+            items: ['🎃', '🎃', '🎃', '🎃'],
+          },
+        ],
+      });
+    </script>
+  </body>
+</html>

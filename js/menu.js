@@ -5,6 +5,7 @@ window.KIDS = [
   { name: 'Lukas', icon: '🧙', page: 'lukas.html' },
   { name: 'Olesia', icon: '🧟', page: 'olesia.html' },
   { name: 'Oleksii', icon: '👻', page: 'oleksii.html' },
+  { name: 'Vasyl', icon: '🦇', page: 'vasyl.html' },
 ];
 
 (function () {
