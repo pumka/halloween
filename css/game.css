@@ -93,10 +93,15 @@ button {
   margin: 0 0 28px;
   opacity: 0.75;
 }
+/* Two cards per row; a lone card in the last row sits in the middle. */
 .kid-picker {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 16px;
+}
+.kid-picker .pick {
+  flex: 0 0 calc(50% - 8px);
 }
 .pick {
   display: flex;
