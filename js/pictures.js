@@ -1,5 +1,5 @@
 // Picture puzzles without any text: for kids who don't read.
-// Every level is "bring a picture to where it belongs" — by dragging or by
+// Most levels are "bring a picture to where it belongs" — by dragging or by
 // tapping the picture and then its place. A pointing hand shows the first
 // move, a chime says "yes", a soft wiggle says "try again".
 //
@@ -10,10 +10,19 @@
 //   holes    items: [piece, ...]           put each piece in its hole
 //            sizes: true → holes ordered from small to big
 //   pattern  rows: [[...seq, answer]], extra: [distractors]
+//   jigsaw   items: [emoji, ...]           four quarters make the picture
+//   sort     groups: [{ color, items }]    put everything in its basket
+//   copy     model: [top … bottom], extra  build the same tower
+//   sudoku   rows: [[...], ...], blanks: [[row, col], ...]
+//            every picture once in every row and column
+//   odd      rows: [[same, same, same, odd]]  tap the one that doesn't belong
+//            (the odd one is written last; rows are shuffled)
+//   memory   items: [emoji, ...]           turn over two cards that match
+//   maze     map: ['S.#', ...], start, goal  walk from S to G; # is a wall
 // help: a short note for the adult, shown small under the board.
 //
 // A picture is an emoji ('🎃'), a shape ('shape:star:#f08a24'), or an
-// object { e, sil, half, size }.
+// object { e, sil, half, quarter, size, n } (n: that many small copies).
 window.PictureGame = (function () {
   const SHAPES = {
     circle: '<circle cx="50" cy="50" r="42"/>',
@@ -59,9 +68,15 @@ window.PictureGame = (function () {
     }
     const s = typeof spec === 'string' ? { e: spec } : spec;
     const p = el('span', 'pic');
+    if (s.n) {
+      p.classList.add('many');
+      for (let i = 0; i < s.n; i++) p.appendChild(el('span', 'glyph', s.e));
+      return p;
+    }
     const glyph = el('span', 'glyph', s.e);
     if (s.sil) glyph.classList.add('sil');
     if (s.half) p.classList.add('half-' + s.half);
+    if (s.quarter) p.classList.add('q-' + s.quarter);
     if (s.size) p.style.setProperty('--k', s.size);
     if (hole) p.classList.add('hole');
     p.appendChild(glyph);
@@ -94,6 +109,7 @@ window.PictureGame = (function () {
         [990, 0.3],
       ]),
     no: () => tones([[220, 0.25]], 'triangle', 0.08),
+    step: () => tones([[520 + Math.random() * 120, 0.08]], 'sine', 0.06),
     level: () =>
       tones(
         [
@@ -137,7 +153,11 @@ window.PictureGame = (function () {
         d.classList.toggle('done', j < i);
         d.classList.toggle('now', j === i);
       });
-      document.querySelectorAll('.pg-overlay').forEach(o => o.remove());
+      // Clear the last level's celebration: falling candy would look like
+      // part of the new level.
+      document
+        .querySelectorAll('.pg-overlay, .confetti')
+        .forEach(o => o.remove());
       build(cfg.levels[i]);
     }
 
@@ -167,6 +187,7 @@ window.PictureGame = (function () {
       const targets = [];
       let mode = 'place';
       let svg = null;
+      let tapHint = null; // hint of the levels without pieces to drag
       const pool = el('div', 'pg-pool');
 
       if (lv.type === 'connect') {
@@ -251,9 +272,102 @@ window.PictureGame = (function () {
           pieces.push(p);
         });
         board.append(rows, pool);
+      } else if (lv.type === 'jigsaw') {
+        const frames = el('div', 'pg-jigsaws');
+        const all = [];
+        lv.items.forEach((e, i) => {
+          const frame = el('div', 'pg-jig');
+          ['tl', 'tr', 'bl', 'br'].forEach(q => {
+            const t = target({ e, quarter: q }, i + q, true);
+            frame.appendChild(t);
+            targets.push(t);
+            all.push([{ e, quarter: q }, i + q]);
+          });
+          frames.appendChild(frame);
+        });
+        shuffle(all).forEach(([spec, key]) => {
+          const p = piece(spec, key);
+          pool.appendChild(p);
+          pieces.push(p);
+        });
+        board.append(frames, pool);
+      } else if (lv.type === 'sort') {
+        const baskets = el('div', 'pg-baskets');
+        const all = [];
+        lv.groups.forEach((g, i) => {
+          const t = el('div', 'pg-target pg-basket');
+          t.dataset.key = i;
+          t.dataset.cap = g.items.length;
+          t.style.setProperty('--c', g.color);
+          t.append(
+            picture('shape:circle:' + g.color),
+            el('div', 'pg-basket-items'),
+          );
+          baskets.appendChild(t);
+          targets.push(t);
+          g.items.forEach(e => all.push([e, i]));
+        });
+        shuffle(all).forEach(([e, key]) => {
+          const p = piece(e, key);
+          pool.appendChild(p);
+          pieces.push(p);
+        });
+        board.append(baskets, pool);
+      } else if (lv.type === 'copy') {
+        const both = el('div', 'pg-copy');
+        const model = el('div', 'pg-tower model');
+        const tower = el('div', 'pg-tower');
+        lv.model.forEach(e => {
+          const f = el('div', 'pg-fixed');
+          f.appendChild(picture(e));
+          model.appendChild(f);
+          const t = target(null, e);
+          tower.appendChild(t);
+          targets.push(t);
+        });
+        model.appendChild(el('div', 'pg-base'));
+        tower.appendChild(el('div', 'pg-base'));
+        both.append(model, tower);
+        shuffle(lv.model.concat(lv.extra || [])).forEach(e => {
+          const p = piece(e, e);
+          pool.appendChild(p);
+          pieces.push(p);
+        });
+        board.append(both, pool);
+      } else if (lv.type === 'sudoku') {
+        const grid = el('div', 'pg-sudoku');
+        grid.style.setProperty('--n', lv.rows.length);
+        const blank = new Set(lv.blanks.map(([r, c]) => r + ',' + c));
+        const answers = [];
+        lv.rows.forEach((row, r) =>
+          row.forEach((e, c) => {
+            if (blank.has(r + ',' + c)) {
+              const t = target(null, e);
+              grid.appendChild(t);
+              targets.push(t);
+              answers.push(e);
+            } else {
+              const f = el('div', 'pg-fixed');
+              f.appendChild(picture(e));
+              grid.appendChild(f);
+            }
+          }),
+        );
+        shuffle(answers).forEach(e => {
+          const p = piece(e, e);
+          pool.appendChild(p);
+          pieces.push(p);
+        });
+        board.append(grid, pool);
+      } else if (lv.type === 'odd') {
+        tapHint = buildOdd(lv);
+      } else if (lv.type === 'memory') {
+        tapHint = buildMemory(lv);
+      } else if (lv.type === 'maze') {
+        tapHint = buildMaze(lv);
       }
 
-      current = { pieces, targets, mode, svg, lines: [] };
+      current = { pieces, targets, mode, svg, lines: [], hint: tapHint };
       pieces.forEach(p => wire(p));
       targets.forEach(t =>
         t.addEventListener('click', () => {
@@ -273,6 +387,187 @@ window.PictureGame = (function () {
         { duration: 350, easing: 'ease-out' },
       );
       hintTimer = setTimeout(hint, 900);
+    }
+
+    // ----- levels without pieces to drag -----
+    function shake(...nodes) {
+      nodes.forEach(x => {
+        x.classList.remove('wiggle');
+        void x.offsetWidth;
+        x.classList.add('wiggle');
+      });
+    }
+
+    // Odd one out: tap the picture that doesn't belong in its row.
+    function buildOdd(lv) {
+      const rows = el('div', 'pg-odd');
+      const answers = [];
+      let left = lv.rows.length;
+      lv.rows.forEach(items => {
+        const row = el('div', 'pg-odd-row');
+        const odd = items.length - 1;
+        shuffle(items.map((_, i) => i)).forEach(i => {
+          const b = el('button', 'pg-fixed pg-tap');
+          b.appendChild(picture(items[i]));
+          if (i === odd) answers.push(b);
+          b.onclick = () => {
+            poke();
+            if (row.classList.contains('done')) return;
+            if (i !== odd) {
+              sound.no();
+              shake(b);
+              return;
+            }
+            sound.yes();
+            row.classList.add('done');
+            b.classList.add('right');
+            burst(b);
+            if (!--left) setTimeout(won, 700);
+          };
+          row.appendChild(b);
+        });
+        rows.appendChild(row);
+      });
+      board.appendChild(rows);
+      return () => {
+        const b = answers.find(x => !x.closest('.done'));
+        if (b) showHand([b]);
+      };
+    }
+
+    // Memory: turn over two cards; a matching pair stays open.
+    function buildMemory(lv) {
+      const grid = el('div', 'pg-memory');
+      let open = [];
+      let left = lv.items.length;
+      shuffle(lv.items.concat(lv.items)).forEach(e => {
+        const c = el('button', 'pg-mem');
+        c.dataset.key = e;
+        const front = el('span', 'pg-mem-front');
+        front.appendChild(picture(e));
+        c.append(front, el('span', 'pg-mem-back', '🕸️'));
+        c.onclick = () => {
+          poke();
+          if (open.length === 2 || c.classList.contains('open')) return;
+          c.classList.add('open');
+          open.push(c);
+          if (open.length < 2) return;
+          const [a, b] = open;
+          if (a.dataset.key === b.dataset.key) {
+            setTimeout(() => {
+              open = [];
+              a.classList.add('matched');
+              b.classList.add('matched');
+              sound.yes();
+              burst(a);
+              burst(b);
+              if (!--left) setTimeout(won, 700);
+            }, 350);
+          } else {
+            setTimeout(() => {
+              a.classList.remove('open');
+              b.classList.remove('open');
+              open = [];
+            }, 1100);
+          }
+        };
+        grid.appendChild(c);
+      });
+      board.appendChild(grid);
+      return () => {
+        const c = grid.querySelector('.pg-mem:not(.open)');
+        if (c) showHand([c]);
+      };
+    }
+
+    // Maze: walk to the goal cell by cell, by tapping or dragging along.
+    function buildMaze(lv) {
+      const grid = el('div', 'pg-maze');
+      const h = lv.map.length;
+      const w = lv.map[0].length;
+      grid.style.setProperty('--w', w);
+      const cells = [];
+      let pos;
+      let goal;
+      lv.map.forEach((line, r) =>
+        [...line].forEach((ch, c) => {
+          const cell = el('div', 'pg-cell' + (ch === '#' ? ' wall' : ''));
+          cell.dataset.r = r;
+          cell.dataset.c = c;
+          if (ch === 'S') pos = [r, c];
+          if (ch === 'G') {
+            goal = [r, c];
+            cell.appendChild(el('span', 'pg-goal', lv.goal));
+          }
+          cells.push(cell);
+          grid.appendChild(cell);
+        }),
+      );
+      const at = ([r, c]) => cells[r * w + c];
+      const walker = el('span', 'pg-walker', lv.start);
+      at(pos).append(walker);
+      at(pos).classList.add('trail');
+      let done = false;
+
+      const stepTo = cell => {
+        if (done || !cell || cell.classList.contains('wall')) return;
+        const to = [+cell.dataset.r, +cell.dataset.c];
+        if (Math.abs(to[0] - pos[0]) + Math.abs(to[1] - pos[1]) !== 1) return;
+        pos = to;
+        cell.appendChild(walker);
+        cell.classList.add('trail');
+        sound.step();
+        if (pos[0] === goal[0] && pos[1] === goal[1]) {
+          done = true;
+          cell.classList.add('reached');
+          sound.yes();
+          burst(cell);
+          setTimeout(won, 900);
+        }
+      };
+      const cellAt = (x, y) => {
+        const hit = document.elementFromPoint(x, y);
+        return hit && hit.closest('.pg-cell');
+      };
+      grid.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        poke();
+        grid.setPointerCapture(e.pointerId);
+        stepTo(cellAt(e.clientX, e.clientY));
+      });
+      grid.addEventListener('pointermove', e => {
+        if (e.buttons) stepTo(cellAt(e.clientX, e.clientY));
+      });
+      board.appendChild(grid);
+
+      // Shortest way from where the walker is to the goal, for the hint.
+      const open = ([r, c]) =>
+        r >= 0 && c >= 0 && r < h && c < w && lv.map[r][c] !== '#';
+      const way = () => {
+        const prev = new Map([[pos.join(), null]]);
+        const queue = [pos];
+        while (queue.length) {
+          const p = queue.shift();
+          [
+            [1, 0],
+            [-1, 0],
+            [0, 1],
+            [0, -1],
+          ].forEach(([dr, dc]) => {
+            const n = [p[0] + dr, p[1] + dc];
+            if (open(n) && !prev.has(n.join())) {
+              prev.set(n.join(), p);
+              queue.push(n);
+            }
+          });
+        }
+        const path = [];
+        for (let p = goal; p; p = prev.get(p.join())) path.unshift(p);
+        return path;
+      };
+      return () => {
+        if (!done) showHand(way().slice(0, 4).map(at));
+      };
     }
 
     // ----- dragging and tapping -----
@@ -375,6 +670,13 @@ window.PictureGame = (function () {
       if (current.mode === 'line') {
         current.lines.push(addLine(p, t));
         t.classList.add('matched');
+      } else if (t.dataset.cap) {
+        // A basket takes several pictures; it's full when all are in.
+        const items = t.querySelector('.pg-basket-items');
+        items.appendChild(p.firstChild);
+        p.remove();
+        if (items.children.length < +t.dataset.cap)
+          t.classList.remove('filled');
       } else {
         t.replaceChildren(p.firstChild);
         p.remove();
@@ -435,33 +737,60 @@ window.PictureGame = (function () {
       idleTimer = setTimeout(hint, 15000);
     }
     function hint() {
-      const p = current.pieces.find(x => !x.classList.contains('used'));
-      if (!p) return;
+      idleTimer = setTimeout(hint, 15000);
+      if (current.hint) return current.hint();
+      const free = x => !x.classList.contains('used');
       const t = current.targets.find(
-        x => !x.classList.contains('filled') && x.dataset.key === p.dataset.key,
+        x =>
+          !x.classList.contains('filled') &&
+          current.pieces.some(p => free(p) && p.dataset.key === x.dataset.key),
       );
       if (!t) return;
-      const a = p.getBoundingClientRect();
-      const b = t.getBoundingClientRect();
+      const p = current.pieces.find(
+        x => free(x) && x.dataset.key === t.dataset.key,
+      );
+      showHand([p, t]);
+    }
+    // The hand presses the first node and moves on through the others;
+    // with a single node it just taps it twice.
+    function showHand(nodes) {
+      const rs = nodes.map(n => n.getBoundingClientRect());
       const hand = el('div', 'pg-hand', '👆');
       document.body.appendChild(hand);
-      const at = (r, s) => ({
+      const at = (r, s, offset) => ({
         transform: `translate(${r.left + r.width / 2}px, ${r.top + r.height / 2}px) scale(${s})`,
         opacity: 1,
+        offset,
       });
-      const anim = hand.animate(
-        [
-          { ...at(a, 1), opacity: 0 },
-          { ...at(a, 1), offset: 0.15 },
-          { ...at(a, 0.85), offset: 0.25 },
-          { ...at(b, 0.85), offset: 0.75 },
-          { ...at(b, 1), offset: 0.85 },
-          { ...at(b, 1), opacity: 0 },
-        ],
-        { duration: 2400, iterations: 2, easing: 'ease-in-out' },
-      );
+      const a = rs[0];
+      const z = rs[rs.length - 1];
+      const frames =
+        rs.length === 1
+          ? [
+              at(a, 1, 0.2),
+              at(a, 0.8, 0.35),
+              at(a, 1, 0.5),
+              at(a, 0.8, 0.65),
+              at(a, 1, 0.8),
+            ]
+          : [
+              at(a, 1, 0.15),
+              at(a, 0.85, 0.25),
+              ...rs
+                .slice(1)
+                .map((r, i) =>
+                  at(r, 0.85, 0.25 + (0.5 * (i + 1)) / (rs.length - 1)),
+                ),
+              at(z, 1, 0.85),
+            ];
+      frames.unshift({ ...at(a, 1, 0), opacity: 0 });
+      frames.push({ ...at(z, 1, 1), opacity: 0 });
+      const anim = hand.animate(frames, {
+        duration: 2400,
+        iterations: 2,
+        easing: 'ease-in-out',
+      });
       anim.onfinish = () => hand.remove();
-      idleTimer = setTimeout(hint, 15000);
     }
 
     // ----- rewards -----
@@ -514,7 +843,17 @@ window.PictureGame = (function () {
         });
         box.appendChild(row);
       }
-      const next = el('button', 'pg-next', last ? '🔁' : '▶');
+      // Next: a big arrow carrying the next level's icon (the same icon as
+      // in the progress bar). After the last level: start again.
+      const next = last
+        ? el('button', 'pg-again', '🔁')
+        : el(
+            'button',
+            'pg-next',
+            '<svg viewBox="0 0 160 100"><path d="M8 25 H95 V5 L155 50 ' +
+              'L95 95 V75 H8 Z"/></svg>' +
+              `<span>${cfg.levels[level + 1].icon || '🎃'}</span>`,
+          );
       next.onclick = () => go(last ? 0 : level + 1);
       box.appendChild(next);
       o.appendChild(box);

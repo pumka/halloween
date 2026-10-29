@@ -9,15 +9,18 @@
       href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap"
     />
     <link rel="stylesheet" href="css/game.css?v=d6938d17" />
-    <link rel="stylesheet" href="css/pictures.css?v=11e8fe52" />
+    <link rel="stylesheet" href="css/pictures.css?v=fe07aeda" />
     <script src="js/menu.js?v=20f97f17"></script>
-    <script src="js/pictures.js?v=27835b21"></script>
+    <script src="js/pictures.js?v=8d5a22b8"></script>
   </head>
   <body>
     <nav id="menu" class="menu"></nav>
     <main id="game" class="pg-main"></main>
     <script>
-      // Seven short picture levels, no reading needed.
+      // Fifteen short picture levels (about a minute each), no reading needed.
+      // Levels 1–7 are matching and placing puzzles like his worksheets,
+      // 8–15 are other kinds: memory, odd one out, counting, jigsaw,
+      // sorting, building, sudoku and a maze.
       // icon: shown in the progress bar; reward: shown when the level is done;
       // help: note for the adult who plays along (Vasyl doesn't read).
       PictureGame.start({
@@ -106,10 +109,131 @@
           {
             type: 'holes',
             sizes: true,
-            icon: '🏆',
-            reward: '🏆',
+            icon: '🍬',
+            reward: '🎈',
             help: 'Von klein nach groß: die Kürbisse in die Löcher mit der passenden Größe stellen.',
             items: ['🎃', '🎃', '🎃', '🎃'],
+          },
+          // ----- Levels 8–15: new kinds of puzzles -----
+
+          // Memory: turn over two cards; same pictures stay open.
+          {
+            type: 'memory',
+            icon: '🎴',
+            reward: '🍦',
+            help:
+              'Memory: zwei Karten umdrehen. Sind es gleiche Bilder, bleiben ' +
+              'sie offen, sonst drehen sie sich wieder um.',
+            items: ['🎃', '👻', '🦇', '🍬'],
+          },
+          // Odd one out.
+          {
+            type: 'odd',
+            icon: '🔍',
+            reward: '🍰',
+            help:
+              'Was passt nicht dazu? In jeder Reihe das eine andere Bild ' +
+              'antippen.',
+            rows: [
+              ['🎃', '🎃', '🎃', '👻'],
+              ['🦇', '🦇', '🦇', '🦉'],
+              ['🍎', '🍌', '🍐', '🚗'],
+              ['🐶', '🐱', '🐭', '🍕'],
+            ],
+          },
+          // Counting: as many dots as pumpkins.
+          {
+            type: 'pairs',
+            icon: '🎲',
+            reward: '🍓',
+            help:
+              'Zählen: die Karte mit genauso vielen Punkten neben die ' +
+              'Kürbisse ziehen.',
+            pairs: [
+              [
+                { e: '🎃', n: 1 },
+                { e: '🔴', n: 1 },
+              ],
+              [
+                { e: '🎃', n: 2 },
+                { e: '🔴', n: 2 },
+              ],
+              [
+                { e: '🎃', n: 3 },
+                { e: '🔴', n: 3 },
+              ],
+              [
+                { e: '🎃', n: 4 },
+                { e: '🔴', n: 4 },
+              ],
+            ],
+          },
+          // Jigsaw: four pieces make a picture.
+          {
+            type: 'jigsaw',
+            icon: '🧩',
+            reward: '🍿',
+            help:
+              'Puzzle: die vier Teile an die richtige Stelle ziehen, bis das ' +
+              'Bild ganz ist. Die grauen Schatten zeigen, wo was hingehört.',
+            items: ['🎃', '👻'],
+          },
+          // Sort by colour into two baskets.
+          {
+            type: 'sort',
+            icon: '🧺',
+            reward: '🍯',
+            help:
+              'Sortieren: alles Orange in den orangen Korb, alles Lila in ' +
+              'den lila Korb.',
+            groups: [
+              { color: '#f08a24', items: ['🎃', '🍊', '🥕'] },
+              { color: '#7a4fc4', items: ['🍇', '🍆', '☂️'] },
+            ],
+          },
+          // Copy the tower (like his HABA stacking toy).
+          {
+            type: 'copy',
+            icon: '🧱',
+            reward: '🧃',
+            help:
+              'Nachbauen: rechts denselben Turm bauen wie links – von oben ' +
+              'nach unten dieselben Bilder.',
+            model: ['🦇', '👻', '🎃'],
+            extra: ['🕷️', '🍬'],
+          },
+          // Picture sudoku.
+          {
+            type: 'sudoku',
+            icon: '🧛',
+            reward: '🎁',
+            help:
+              'Bilder-Sudoku: in jeder Reihe und jeder Spalte kommt jedes ' +
+              'Bild genau einmal vor. Was fehlt in den leeren Feldern?',
+            rows: [
+              ['🎃', '👻', '🦇'],
+              ['👻', '🦇', '🎃'],
+              ['🦇', '🎃', '👻'],
+            ],
+            blanks: [
+              [0, 2],
+              [1, 0],
+              [1, 2],
+              [2, 1],
+            ],
+          },
+          // Maze: bring the ghost to the candy. The last level.
+          {
+            type: 'maze',
+            icon: '🏆',
+            reward: '🏆',
+            help:
+              'Labyrinth: das Gespenst zu den Süßigkeiten bringen – auf das ' +
+              'Feld daneben tippen oder mit dem Finger den Weg entlang ' +
+              'ziehen. Das ist der letzte Level!',
+            start: '👻',
+            goal: '🍬',
+            map: ['S..#.', '##.#.', '.....', '.###.', '...#G'],
           },
         ],
       });
