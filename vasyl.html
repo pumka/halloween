@@ -9,9 +9,9 @@
       href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap"
     />
     <link rel="stylesheet" href="css/game.css?v=93a6fad3" />
-    <link rel="stylesheet" href="css/pictures.css?v=df0e0c9c" />
+    <link rel="stylesheet" href="css/pictures.css?v=f321e968" />
     <script src="js/menu.js?v=20f97f17"></script>
-    <script src="js/pictures.js?v=d8e38779"></script>
+    <script src="js/pictures.js?v=be31a6a3"></script>
   </head>
   <body>
     <nav id="menu" class="menu"></nav>
@@ -20,7 +20,7 @@
       // Fifteen short picture levels (about a minute each), no reading needed.
       // Levels 1–7 are matching and placing puzzles like his worksheets,
       // 8–15 are other kinds: memory, odd one out, counting, jigsaw,
-      // sorting, building, sudoku and a maze.
+      // sorting, building and two mazes.
       // icon: shown in the progress bar; reward: shown when the level is done;
       // help: note for the adult who plays along (Vasyl doesn't read).
       PictureGame.start({
@@ -202,38 +202,41 @@
             model: ['🦇', '👻', '🎃'],
             extra: ['🕷️', '🍬'],
           },
-          // Picture sudoku.
+          // Maze: bring the ghost to the candy.
           {
-            type: 'sudoku',
+            type: 'maze',
             icon: '🧛',
             reward: '🎁',
             help:
-              'Bilder-Sudoku: in jeder Reihe und jeder Spalte kommt jedes ' +
-              'Bild genau einmal vor. Was fehlt in den leeren Feldern?',
-            rows: [
-              ['🎃', '👻', '🦇'],
-              ['👻', '🦇', '🎃'],
-              ['🦇', '🎃', '👻'],
-            ],
-            blanks: [
-              [0, 2],
-              [1, 0],
-              [1, 2],
-              [2, 1],
-            ],
+              'Labyrinth: das Gespenst zu den Süßigkeiten bringen – auf das ' +
+              'Feld daneben tippen oder mit dem Finger den Weg entlang ' +
+              'ziehen.',
+            start: '👻',
+            goal: '🍬',
+            map: ['S..#.', '##.#.', '.....', '.###.', '...#G'],
           },
-          // Maze: bring the ghost to the candy. The last level.
+          // A bigger maze with dead ends. The last level.
           {
             type: 'maze',
             icon: '🏆',
             reward: '🏆',
             help:
-              'Labyrinth: das Gespenst zu den Süßigkeiten bringen – auf das ' +
-              'Feld daneben tippen oder mit dem Finger den Weg entlang ' +
-              'ziehen. Das ist der letzte Level!',
-            start: '👻',
-            goal: '🍬',
-            map: ['S..#.', '##.#.', '.....', '.###.', '...#G'],
+              'Großes Labyrinth: die Fledermaus zum Kürbis bringen. Es gibt ' +
+              'Sackgassen – dann einfach zurückgehen. Das ist der letzte ' +
+              'Level!',
+            start: '🦇',
+            goal: '🎃',
+            map: [
+              'S...#....',
+              '###.#.##.',
+              '....#..#.',
+              '.#####.#.',
+              '.......#.',
+              '##.#.###.',
+              '...#...#.',
+              '.#####.##',
+              '.....#..G',
+            ],
           },
         ],
       });

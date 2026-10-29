@@ -13,8 +13,6 @@
 //   jigsaw   items: [emoji, ...]           four quarters make the picture
 //   sort     groups: [{ color, items }]    put everything in its basket
 //   copy     model: [top … bottom], extra  build the same tower
-//   sudoku   rows: [[...], ...], blanks: [[row, col], ...]
-//            every picture once in every row and column
 //   odd      rows: [[same, same, same, odd]]  tap the one that doesn't belong
 //            (the odd one is written last; rows are shuffled)
 //   memory   items: [emoji, ...]           turn over two cards that match
@@ -334,31 +332,6 @@ window.PictureGame = (function () {
           pieces.push(p);
         });
         board.append(both, pool);
-      } else if (lv.type === 'sudoku') {
-        const grid = el('div', 'pg-sudoku');
-        grid.style.setProperty('--n', lv.rows.length);
-        const blank = new Set(lv.blanks.map(([r, c]) => r + ',' + c));
-        const answers = [];
-        lv.rows.forEach((row, r) =>
-          row.forEach((e, c) => {
-            if (blank.has(r + ',' + c)) {
-              const t = target(null, e);
-              grid.appendChild(t);
-              targets.push(t);
-              answers.push(e);
-            } else {
-              const f = el('div', 'pg-fixed');
-              f.appendChild(picture(e));
-              grid.appendChild(f);
-            }
-          }),
-        );
-        shuffle(answers).forEach(e => {
-          const p = piece(e, e);
-          pool.appendChild(p);
-          pieces.push(p);
-        });
-        board.append(grid, pool);
       } else if (lv.type === 'odd') {
         tapHint = buildOdd(lv);
       } else if (lv.type === 'memory') {
