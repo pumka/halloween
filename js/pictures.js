@@ -843,16 +843,14 @@ window.PictureGame = (function () {
         });
         box.appendChild(row);
       }
-      // Next: a big arrow carrying the next level's icon (the same icon as
-      // in the progress bar). After the last level: start again.
+      // Next: a big arrow. After the last level: start again.
       const next = last
         ? el('button', 'pg-again', '🔁')
         : el(
             'button',
             'pg-next',
             '<svg viewBox="0 0 160 100"><path d="M8 25 H95 V5 L155 50 ' +
-              'L95 95 V75 H8 Z"/></svg>' +
-              `<span>${cfg.levels[level + 1].icon || '🎃'}</span>`,
+              'L95 95 V75 H8 Z"/></svg>',
           );
       next.onclick = () => go(last ? 0 : level + 1);
       box.appendChild(next);

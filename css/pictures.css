@@ -346,7 +346,7 @@
 .pg-trophies span {
   animation: bob 1.4s ease-in-out infinite;
 }
-/* Next level: a big green arrow with the next level's icon on it */
+/* Next level: a big green arrow */
 .pg-next {
   position: relative;
   margin-top: 12px;
@@ -371,14 +371,6 @@
   stroke: var(--ink);
   stroke-width: 5;
   stroke-linejoin: round;
-}
-.pg-next span {
-  position: absolute;
-  left: 44%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 50px;
-  line-height: 1;
 }
 @keyframes nudge {
   50% {
