@@ -798,6 +798,120 @@ window.PictureGame = (function () {
         setTimeout(() => s.remove(), 5200);
       }
     }
+    // The end of the game: fireworks behind the trophy box for as long as
+    // it is open. Silent on purpose – no bangs.
+    function fireworks(o) {
+      const cv = el('canvas', 'pg-fireworks');
+      o.prepend(cv);
+      const ctx = cv.getContext('2d');
+      const colors = [
+        '#ff8a1f',
+        '#ffc832',
+        '#7ee081',
+        '#b48cff',
+        '#ff6fb5',
+        '#6fd3ff',
+      ];
+      const rockets = [];
+      const sparks = [];
+      let w;
+      let h;
+      let unit;
+      let wait = 0;
+      const gravity = () => 0.06 * unit;
+      // Burst next to the trophy box, not behind it (on phones the box
+      // covers the middle of the screen).
+      const launch = () => {
+        const box = o.querySelector('.win-box').getBoundingClientRect();
+        const x = w * (0.1 + Math.random() * 0.8);
+        let y = h * (0.1 + Math.random() * 0.6);
+        if (x > box.left - 30 && x < box.right + 30) {
+          const above = box.top - 40;
+          const below = h - box.bottom - 120;
+          y =
+            above > below
+              ? 30 + Math.random() * Math.max(above - 30, 0)
+              : box.bottom + 40 + Math.random() * Math.max(below - 40, 0);
+        }
+        rockets.push({
+          x,
+          y: h,
+          vx: (Math.random() - 0.5) * unit,
+          vy: -Math.sqrt(2 * gravity() * (h - y)),
+          color: colors[(Math.random() * colors.length) | 0],
+        });
+      };
+      const explode = r => {
+        const n = 50 + ((Math.random() * 30) | 0);
+        for (let i = 0; i < n; i++) {
+          const ang = (i / n) * Math.PI * 2;
+          const speed = (1 + Math.random() * 3) * unit;
+          const life = 55 + Math.random() * 35;
+          sparks.push({
+            x: r.x,
+            y: r.y,
+            vx: Math.cos(ang) * speed,
+            vy: Math.sin(ang) * speed,
+            life,
+            max: life,
+            color: Math.random() < 0.2 ? '#fff' : r.color,
+          });
+        }
+      };
+      const frame = () => {
+        if (!cv.isConnected) return;
+        if (cv.width !== innerWidth || cv.height !== innerHeight) {
+          w = cv.width = innerWidth;
+          h = cv.height = innerHeight;
+          unit = Math.max(h / 700, 0.6);
+        }
+        if (--wait <= 0) {
+          launch();
+          wait = 18 + Math.random() * 30;
+        }
+        // Fade the previous frame a little: the sparks leave trails.
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
+        ctx.fillRect(0, 0, w, h);
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i = rockets.length - 1; i >= 0; i--) {
+          const r = rockets[i];
+          r.x += r.vx;
+          r.y += r.vy;
+          r.vy += gravity();
+          ctx.fillStyle = r.color;
+          ctx.beginPath();
+          ctx.arc(r.x, r.y, 3 * unit, 0, Math.PI * 2);
+          ctx.fill();
+          if (r.vy >= 0) {
+            rockets.splice(i, 1);
+            explode(r);
+          }
+        }
+        for (let i = sparks.length - 1; i >= 0; i--) {
+          const s = sparks[i];
+          s.x += s.vx;
+          s.y += s.vy;
+          s.vx *= 0.97;
+          s.vy = s.vy * 0.97 + 0.04 * unit;
+          if (--s.life <= 0) {
+            sparks.splice(i, 1);
+            continue;
+          }
+          ctx.globalAlpha = s.life / s.max;
+          ctx.fillStyle = s.color;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, 2.5 * unit, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        }
+        requestAnimationFrame(frame);
+      };
+      frame();
+      // Three at once to start with.
+      launch();
+      launch();
+    }
     function won() {
       clearTimeout(idleTimer);
       sound.level();
@@ -829,6 +943,10 @@ window.PictureGame = (function () {
       box.appendChild(next);
       o.appendChild(box);
       document.body.appendChild(o);
+      if (last) {
+        o.classList.add('pg-final');
+        fireworks(o);
+      }
     }
 
     go(level);

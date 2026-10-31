@@ -335,6 +335,20 @@
 .pg-win .win-emoji {
   font-size: 110px;
 }
+/* The end of the game: fireworks on a night sky behind the trophies */
+.pg-final {
+  background: rgba(14, 8, 30, 0.88);
+}
+.pg-final .win-box {
+  position: relative;
+}
+.pg-fireworks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
 .pg-trophies {
   display: flex;
   flex-wrap: wrap;
