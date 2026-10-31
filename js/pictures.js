@@ -18,6 +18,7 @@
 //   memory   items: [emoji, ...]           turn over two cards that match
 //   maze     map: ['S.#', ...], start, goal  walk from S to G; # is a wall
 // help: a short note for the adult, shown small under the board.
+// code: optional, shown big on the very last screen (a key for the next puzzle).
 //
 // A picture is an emoji ('🎃'), a shape ('shape:star:#f08a24'), or an
 // object { e, sil, half, quarter, size, n } (n: that many small copies).
@@ -929,6 +930,8 @@ window.PictureGame = (function () {
           row.appendChild(s);
         });
         box.appendChild(row);
+        // A code for the next puzzle (e.g. a lock), shown big.
+        if (cfg.code) box.appendChild(el('div', 'pg-code', '🔑 ' + cfg.code));
       }
       // Next: a big arrow. After the last level: start again.
       const next = last

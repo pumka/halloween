@@ -357,6 +357,20 @@
   font-size: 28px;
   margin: 8px 0;
 }
+/* The code for the next puzzle */
+.pg-code {
+  margin: 10px auto 4px;
+  padding: 4px 22px;
+  width: fit-content;
+  border: 4px solid var(--ink);
+  border-radius: 20px;
+  background: #fff;
+  font-size: 64px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
 .pg-trophies span {
   animation: bob 1.4s ease-in-out infinite;
 }
